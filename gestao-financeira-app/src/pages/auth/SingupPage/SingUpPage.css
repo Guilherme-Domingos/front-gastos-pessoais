@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 600px;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.titulo {
+  font-size: 32px;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 30px;
+}
+
+.form-box {
+  width: 100%;
+  background-color: #f1f1f1;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 15px;
+  color: #333;
+}
+
+input {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 4px;
+  font-size: 14px;
+  background-color: transparent;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+input:focus {
+  border-bottom: 1px solid #666;
+}
+
+.esqueci {
+  text-align: right;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.esqueci a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.botao-verde {
+  background-color: #00c851;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-verde:hover {
+  background-color: #009e3e;
+}
+
+.login {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.login a {
+  text-decoration: none;
+  color: #333;
+}
+
+.botao-google {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px;
+  font-size: 14px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.botao-google img {
+  width: 20px;
+  height: 20px;
+}
