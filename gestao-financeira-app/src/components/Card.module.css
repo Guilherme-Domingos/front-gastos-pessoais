@@ -1,0 +1,33 @@
+.card {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}

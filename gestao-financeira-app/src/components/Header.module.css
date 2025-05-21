@@ -1,0 +1,14 @@
+.header {
+  width: 1230px;
+  max-width: 100vw;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #0f0f10;
+  background-color: #ffffff;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}

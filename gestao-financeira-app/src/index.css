@@ -8,6 +8,8 @@
 
   --primary-color: #82C3A7;
   --light-gray: #d9d9d9;
+
+  display: flex;
 }
 
 * {
