@@ -3,6 +3,8 @@ import LoginPage from '../pages/auth/LoginPage/LoginPage';
 import SingUpPage from '../pages/auth/SingupPage/SingUpPage';
 import { DefaultLayout } from '../layouts/DefaultLayout';
 import { Dashboard } from '../pages/Dashboard/DashboardPage';
+import { NewRecipe } from '../pages/NewRecipe/NewRecipe';
+import { NewExpense } from '../pages/NewExpense/NewExpense';
 
 const PAGE_TITLES = {
   '/': 'Dashboard',
@@ -32,8 +34,8 @@ export default function AppRoutes() {
       <Route path='/cadastro' element={<SingUpPage />} />
       <Route path='/' element={<LayoutWrapper />}>
         <Route index element={<Dashboard />} />
-        <Route path="receita/nova" element={<h1>Nova Receita</h1>} />
-        <Route path="despesa/nova" element={<h1>Nova Despesa</h1>} />
+        <Route path="receita/nova" element={<NewRecipe />} />
+        <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
       </Route>
     </Routes>
