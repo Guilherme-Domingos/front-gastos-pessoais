@@ -1,14 +1,17 @@
 import AppRoutes from "./routes"
-import { BrowserRouter} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { TransactionProvider } from "./contexts/TransactionContext";
 
 function App() {
 
   return (
     <>
     <div>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <TransactionProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </TransactionProvider>
     </div>
     </>
   )
