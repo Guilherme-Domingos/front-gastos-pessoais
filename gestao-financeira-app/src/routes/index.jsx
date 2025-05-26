@@ -5,14 +5,29 @@ import { DefaultLayout } from '../layouts/DefaultLayout';
 import { Dashboard } from '../pages/Dashboard/DashboardPage';
 import { NewRecipe } from '../pages/NewRecipe/NewRecipe';
 import { NewExpense } from '../pages/NewExpense/NewExpense';
+import { TransactionDetails } from '../components/TransactionDetails';
+import { useContext } from 'react';
+import { TransactionContext } from '../contexts/TransactionContext';
 
 const PAGE_TITLES = {
   '/': 'Dashboard',
   '/receita/nova': 'Nova Receita',
   '/despesa/nova': 'Nova Despesa',
   '/perfil': 'Perfil',
+  '/transacao': 'Detalhes da Transação',
   // Adicione outros caminhos e títulos conforme necessário
 };
+
+function TransactionDetailsWrapper() {
+  const { transactions } = useContext(TransactionContext);
+  const location = useLocation();
+  const id = location.pathname.split('/').pop();
+  const transaction = transactions.find(tx => String(tx.id) === id);
+
+  if (!transaction) return <div>Transação não encontrada</div>;
+
+  return <TransactionDetails transaction={transaction} />;
+}
 
 function LayoutWrapper() {
   const location = useLocation();
@@ -37,6 +52,7 @@ export default function AppRoutes() {
         <Route path="receita/nova" element={<NewRecipe />} />
         <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
+        <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
       </Route>
     </Routes>
   );
