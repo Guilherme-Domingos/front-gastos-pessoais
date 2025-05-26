@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from './NewRecipe.module.css';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { CategoryContext } from '../../contexts/CatogoryContext';
+import { CategoryModal } from '../../components/CategoryModal';
 
 export function NewRecipe() {
   const [data, setData] = useState('');
@@ -9,7 +11,9 @@ export function NewRecipe() {
   const [categoria, setCategoria] = useState('');
   const [valor, setValor] = useState('');
   const [descricao, setDescricao] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { categories, addCategory } = useContext(CategoryContext);
 
   const limparCampos = () => {
     setData('');
@@ -25,6 +29,11 @@ export function NewRecipe() {
     limparCampos();
     alert('Receita registrada!');
     navigate('/');
+  };
+
+  const handleSaveCategory = (name) => {
+    addCategory && addCategory(name);
+    setCategoria(name);
   };
 
   return (
@@ -64,13 +73,27 @@ export function NewRecipe() {
 
           <div className={styles.field}>
             <label className={styles.label}>Categoria</label>
-            <input
-              type="text"
-              placeholder="Ex: Salário"
-              value={categoria}
-              onChange={e => setCategoria(e.target.value)}
-              className={styles.input}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <select
+                value={categoria}
+                onChange={e => setCategoria(e.target.value)}
+                className={styles.input}
+              >
+                <option value="">Selecione...</option>
+                {categories && categories.map(cat =>
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                )}
+              </select>
+              <button
+                type="button"
+                className={styles.buttonSecondary}
+                style={{ padding: '0.25rem 0.5rem', height: '2.2rem', display: 'flex', alignItems: 'center' }}
+                onClick={() => setModalOpen(true)}
+                title="Adicionar categoria"
+              >
+                <Plus size={18} />
+              </button>
+            </div>
           </div>
 
           <div className={styles.field}>
@@ -101,6 +124,13 @@ export function NewRecipe() {
           <button className={styles.buttonSecondary} onClick={limparCampos}>Limpar campos</button>
           <button className={styles.buttonPrimary} onClick={registrar}>Registrar Receita</button>
         </div>
+        {modalOpen && (
+          <CategoryModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onSave={handleSaveCategory}
+          />
+        )}
       </div>
     </div>
   );

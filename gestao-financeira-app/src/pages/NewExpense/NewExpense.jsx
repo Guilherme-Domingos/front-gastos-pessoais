@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from './NewExpense.module.css';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { CategoryContext } from '../../contexts/CatogoryContext';
+import { CategoryModal } from '../../components/CategoryModal';
 
-export function NewExpense({ categories }) {
+export function NewExpense() {
   const [data, setData] = useState('');
   const [categoria, setCategoria] = useState('');
   const [valor, setValor] = useState('');
   const [descricao, setDescricao] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { categories, addCategory } = useContext(CategoryContext);
 
   const limparCampos = () => {
     setData('');
@@ -25,6 +30,11 @@ export function NewExpense({ categories }) {
     navigate('/');
   };
 
+  const handleSaveCategory = (name) => {
+    addCategory && addCategory(name);
+    setCategoria(name);
+  };
+
   return (
     <div className={styles.wrapper}>
       <button
@@ -34,10 +44,8 @@ export function NewExpense({ categories }) {
         <ArrowLeft size={16} />
         <span>Nova Despesa</span>
       </button>
-
       <div className={styles.card}>
         <h1 className={styles.heading}>Preencha os dados da despesa</h1>
-
         <div className={styles.grid}>          
           <div className={styles.field}>
             <label className={styles.label}>Data</label>
@@ -48,18 +56,30 @@ export function NewExpense({ categories }) {
               className={styles.input}
             />
           </div>
-
           <div className={styles.field}>
             <label className={styles.label}>Categoria</label>
-            <input
-              type="text"
-              placeholder="Ex: Lazer, Alimentação..."
-              value={categoria}
-              onChange={e => setCategoria(e.target.value)}
-              className={styles.input}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <select
+                value={categoria}
+                onChange={e => setCategoria(e.target.value)}
+                className={styles.input}
+              >
+                <option value="">Selecione...</option>
+                {categories && categories.map(cat =>
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                )}
+              </select>
+              <button
+                type="button"
+                className={styles.buttonSecondary}
+                style={{ padding: '0.25rem 0.5rem', height: '2.2rem', display: 'flex', alignItems: 'center' }}
+                onClick={() => setModalOpen(true)}
+                title="Adicionar categoria"
+              >
+                <Plus size={18} />
+              </button>
+            </div>
           </div>
-
           <div className={styles.field}>
             <label className={styles.label}>Valor (R$)</label>
             <input
@@ -72,7 +92,6 @@ export function NewExpense({ categories }) {
             />
           </div>
         </div>
-
         <div className={styles.fieldFull}>
           <label className={styles.label}>Descrição (opcional)</label>
           <textarea
@@ -83,11 +102,17 @@ export function NewExpense({ categories }) {
             className={styles.textarea}
           />
         </div>
-
         <div className={styles.actions}>
           <button className={styles.buttonSecondary} onClick={limparCampos}>Limpar campos</button>
           <button className={styles.buttonPrimary} onClick={registrar}>Registrar despesa</button>
         </div>
+        {modalOpen && (
+          <CategoryModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onSave={handleSaveCategory}
+          />
+        )}
       </div>
     </div>
   );
