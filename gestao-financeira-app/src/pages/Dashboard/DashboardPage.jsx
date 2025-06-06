@@ -6,7 +6,7 @@ import { TransactionList } from '../../components/TransactionList';
 import { TransactionContext } from '../../contexts/TransactionContext';
 
 export function Dashboard() {
-  const { transactions } = useContext(TransactionContext);
+  const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useContext(TransactionContext);
 
   return (
     <div className={styles.container}>
@@ -14,18 +14,18 @@ export function Dashboard() {
         <Card
           title="Saldo do Mês"
           icon={<CreditCard size={20} />}
-          value="R$ 2245.00"
+          value={`R$ ${getBalance().toFixed(2)}`}
         />
         <Card
           title="Total de Receitas"
           icon={<ArrowUp size={20} />}
-          value="R$ 2500.00"
+          value={`R$ ${getTotalIncome().toFixed(2)}`}
           valueColor={styles.positive}
         />
         <Card
           title="Total de Despesas"
           icon={<ArrowDown size={20} />}
-          value="R$ 255.00"
+          value={`R$ ${getTotalExpenses().toFixed(2)}`}
           valueColor={styles.negative}
         />
       </div>
