@@ -1,32 +1,45 @@
-import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { Routes, Route, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LoginPage from '../pages/auth/LoginPage/LoginPage';
 import SingUpPage from '../pages/auth/SingupPage/SingUpPage';
 import { DefaultLayout } from '../layouts/DefaultLayout';
 import { Dashboard } from '../pages/Dashboard/DashboardPage';
 import { NewRecipe } from '../pages/NewRecipe/NewRecipe';
 import { NewExpense } from '../pages/NewExpense/NewExpense';
+import { TransactionEdit } from '../pages/TransactionEdit/TransactionEdit';
 import { TransactionDetails } from '../components/TransactionDetails';
 import { useContext } from 'react';
 import { TransactionContext } from '../contexts/TransactionContext';
 
-const PAGE_TITLES = {
-  '/': 'Dashboard',
+const PAGE_TITLES = {  '/': 'Dashboard',
   '/receita/nova': 'Nova Receita',
   '/despesa/nova': 'Nova Despesa',
   '/perfil': 'Perfil',
   '/transacao': 'Detalhes da Transação',
+  '/transacao/editar': 'Editar Transação',
   // Adicione outros caminhos e títulos conforme necessário
 };
 
 function TransactionDetailsWrapper() {
-  const { transactions } = useContext(TransactionContext);
+  const { transactions, deleteTransaction } = useContext(TransactionContext);
+  const navigate = useNavigate();
   const location = useLocation();
   const id = location.pathname.split('/').pop();
   const transaction = transactions.find(tx => String(tx.id) === id);
 
   if (!transaction) return <div>Transação não encontrada</div>;
 
-  return <TransactionDetails transaction={transaction} />;
+  const handleEdit = () => {
+    navigate(`/transacao/${id}/editar`);
+  };
+
+  const handleDelete = () => {
+    if (confirm('Tem certeza que deseja excluir esta transação?')) {
+      deleteTransaction(parseInt(id));
+      navigate('/');
+    }
+  };
+
+  return <TransactionDetails transaction={transaction} onEdit={handleEdit} onDelete={handleDelete} />;
 }
 
 function LayoutWrapper() {
@@ -49,10 +62,11 @@ export default function AppRoutes() {
       <Route path='/cadastro' element={<SingUpPage />} />
       <Route path='/' element={<LayoutWrapper />}>
         <Route index element={<Dashboard />} />
-        <Route path="receita/nova" element={<NewRecipe />} />
+        <Route path="receita/nova" element={<NewRecipe />} />        
         <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
         <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
+        <Route path="transacao/:id/editar" element={<TransactionEdit />} />
       </Route>
     </Routes>
   );

@@ -18,7 +18,7 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
 
   return (
     <div className={styles.wrapper}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
+      <button className={styles.backButton} onClick={() => navigate('/')}>
         <ArrowLeft size={16} />
         <span>Detalhes da Transação</span>
       </button>
