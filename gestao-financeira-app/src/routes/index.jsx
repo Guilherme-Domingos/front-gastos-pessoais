@@ -11,11 +11,11 @@ import { useContext } from 'react';
 import { TransactionContext } from '../contexts/TransactionContext';
 
 const PAGE_TITLES = {  '/': 'Dashboard',
-  '/receita/nova': 'Nova Receita',
-  '/despesa/nova': 'Nova Despesa',
-  '/perfil': 'Perfil',
-  '/transacao': 'Detalhes da Transação',
-  '/transacao/editar': 'Editar Transação',
+  '/dashboard/receita/nova': 'Nova Receita',
+  '/dashboard/despesa/nova': 'Nova Despesa',
+  '/dashboard/perfil': 'Perfil',
+  '/dashboard/transacao': 'Detalhes da Transação',
+  '/dashboard/transacao/editar': 'Editar Transação',
   // Adicione outros caminhos e títulos conforme necessário
 };
 
@@ -29,7 +29,7 @@ function TransactionDetailsWrapper() {
   if (!transaction) return <div>Transação não encontrada</div>;
 
   const handleEdit = () => {
-    navigate(`/transacao/${id}/editar`);
+    navigate(`/dashboard/transacao/${id}/editar`);
   };
 
   const handleDelete = () => {
@@ -60,13 +60,13 @@ export default function AppRoutes() {
     <Routes>
       <Route path='/login' element={<LoginPage />} />
       <Route path='/cadastro' element={<SingUpPage />} />
-      <Route path='/' element={<LayoutWrapper />}>
+      <Route path='/dashboard' element={<LayoutWrapper />}>
         <Route index element={<Dashboard />} />
-        <Route path="receita/nova" element={<NewRecipe />} />        
+        <Route path="/dashboard/receita/nova" element={<NewRecipe />} />        
         <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
-        <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
-        <Route path="transacao/:id/editar" element={<TransactionEdit />} />
+        <Route path="/dashboardtransacao/:id" element={<TransactionDetailsWrapper />} />
+        <Route path="/dashboardtransacao/:id/editar" element={<TransactionEdit />} />
       </Route>
     </Routes>
   );

@@ -3,12 +3,16 @@ import styles from './TransactionList.module.css';
 import { useNavigate } from 'react-router-dom';
 
 export function TransactionItem({ tx }) {
-  const colorClass = tx.value >= 0 ? styles.positive : styles.negative;
-  const formatted = `${tx.value >= 0 ? '+' : '-'}R$ ${Math.abs(tx.value).toFixed(2)}`;
+  // Usar amount em vez de value
+  const amount = parseFloat(tx.amount || 0);
+  // Para despesas, consideramos negativo (para coloração)
+  const isNegative = tx.transactionType === 'DESPESA';
+  const colorClass = isNegative ? styles.valueNegative : styles.valuePositive;
+  const formatted = `${isNegative ? '-' : '+'}R$ ${Math.abs(amount).toFixed(2)}`;
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/transacao/${tx.id}`);
+    navigate(`/dashboard/transacao/${tx.id}`);
   };
 
   return (
@@ -20,7 +24,6 @@ export function TransactionItem({ tx }) {
       onKeyDown={e => { if (e.key === 'Enter') handleClick(); }}
     >
       <td>{tx.date}</td>
-      <td>{tx.category}</td>
       <td>{tx.description || '-'}</td>
       <td className={colorClass}>{formatted}</td>
     </tr>

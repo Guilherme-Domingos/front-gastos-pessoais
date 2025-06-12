@@ -4,16 +4,16 @@ import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
 const navItems = [
-  { name: 'Início', to: '/', icon: <Home size={20} /> },
+  { name: 'Início', to: '/dashboard', icon: <Home size={20} /> },
 ];
 
 const transactionItems = [
-  { name: 'Nova Receita', to: '/receita/nova', icon: <ArrowUp size={20} /> , iconColor: styles.arrowUp},
-  { name: 'Nova Despesa', to: '/despesa/nova', icon: <ArrowDown size={20} />, iconColor: styles.arrowDown},
+  { name: 'Nova Receita', to: '/dashboard/receita/nova', icon: <ArrowUp size={20} /> , iconColor: styles.arrowUp},
+  { name: 'Nova Despesa', to: '/dashboard/despesa/nova', icon: <ArrowDown size={20} />, iconColor: styles.arrowDown},
 ];
 
 const analysisItems = [
-  { name: 'Perfil', to: '/perfil', icon: <User size={20} /> }
+  { name: 'Perfil', to: '/dashboard/perfil', icon: <User size={20} /> }
 ];
 
 export function Sidebar() {

@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import { useEffect } from "react";
+import { Api } from "../services/api";
 
 export const TransactionContext = createContext({ 
     transactions: [], 
@@ -8,16 +10,28 @@ export const TransactionContext = createContext({
     deleteTransaction: () => {}
 });
 
+const api = Api();
+
 export function TransactionProvider({ children }) {
     const [filtro, setFiltro] = useState('');
-    const [transactions, setTransactions] = useState([
-        { id: 1, date: '2023-10-01', category: 'Alimentação', description: 'Supermercado', value: -150.00, type: 'despesa' },
-        { id: 2, date: '2023-10-02', category: 'Salário', description: 'Salário Mensal', value: 3000.00, type: 'receita', sender: 'Mercadim' },
-        { id: 3, date: '2023-10-03', category: 'Transporte', description: 'Gasolina', value: -100.00, type: 'despesa' },
-        { id: 4, date: '2023-10-04', category: 'Lazer', description: 'Cinema', value: -50.00, type: 'despesa' },
-        { id: 5, date: '2023-10-05', category: 'Saúde', description: 'Farmácia', value: -200.00, type: 'despesa' },
-        { id: 6, date: '2023-10-05', category: 'Casa', description: 'Construção da garagem', value: -20000.00, type: 'despesa' },
-    ]);
+
+    const [transactions, setTransactions] = useState([]);    
+    
+    useEffect(() => {
+      async function fetchTransactions () {
+        try {
+          const response = await api.get('/transaction');
+          // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
+          const transactionsData = response.data.transactions || response.data;
+          setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
+          console.log('Dados carregados:', transactionsData);
+        } catch (error) {
+          console.error("Erro ao buscar transações:", error);
+        }
+      }
+      fetchTransactions();
+    }
+    , []);
 
     const updateTransaction = (updatedTransaction) => {
         setTransactions(transactions.map(tx => 
@@ -27,25 +41,25 @@ export function TransactionProvider({ children }) {
 
     const deleteTransaction = (id) => {
         setTransactions(transactions.filter(tx => tx.id !== id));
-    };
+    };    
+    
+    const getBalance = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
+        // Se for receita, adiciona; se for despesa, subtrai
+        const amount = parseFloat(transaction.amount || 0);
+        return transaction.transactionType === 'RECEITA' ? acc + amount : acc - amount;
+    }, 0) : 0;
 
-    const getBalance = () => {
-        return transactions.reduce((acc, transaction) => {
-            return transaction.type === 'receita' ? acc + transaction.value : acc + transaction.value;
-        }, 0);
-    }
+    const getTotalIncome = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
+        // Soma apenas as receitas
+        const amount = parseFloat(transaction.amount || 0);
+        return transaction.transactionType === 'RECEITA' ? acc + amount : acc;
+    }, 0) : 0;
 
-    const getTotalIncome = () => {
-        return transactions.reduce((acc, transaction) => {
-            return transaction.type === 'receita' ? acc + transaction.value : acc;
-        }, 0);
-    }
-
-    const getTotalExpenses = () => {
-        return transactions.reduce((acc, transaction) => {
-            return transaction.type === 'despesa' ? acc + transaction.value : acc;
-        }, 0);
-    }
+    const getTotalExpenses = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
+        // Soma apenas as despesas
+        const amount = parseFloat(transaction.amount || 0);
+        return transaction.transactionType === 'DESPESA' ? acc + amount : acc;
+    }, 0) : 0;
 
     return (
         <TransactionContext.Provider value={{ 

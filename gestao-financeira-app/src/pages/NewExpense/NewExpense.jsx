@@ -27,7 +27,7 @@ export function NewExpense() {
     console.log({ data, categoria, valor, descricao });
     limparCampos();
     alert('Despesa registrada!');
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleSaveCategory = (name) => {
@@ -39,7 +39,7 @@ export function NewExpense() {
     <div className={styles.wrapper}>
       <button
         className={styles.backButton}
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/dashboard')}
       >
         <ArrowLeft size={16} />
         <span>Nova Despesa</span>

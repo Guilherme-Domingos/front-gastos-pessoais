@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * Props:
- * - transaction: { date, category, description, value, type, sender? }
+ * - transaction: { date, category, description, amount, transactionType, sender? }
  * - onBack: () => void
  * - onEdit: () => void
  * - onDelete: () => void
@@ -12,13 +12,14 @@ import { useNavigate } from 'react-router-dom';
 export function TransactionDetails({ transaction, onEdit, onDelete }) {
   const navigate = useNavigate();
 
-  const { date, category, description, value, type, sender } = transaction;
-  const isPositive = value >= 0;
-  const formattedValue = `${isPositive ? '+' : '-'}R$ ${Math.abs(value).toFixed(2)}`;
+  const { date, category, description, amount, transactionType, sender } = transaction;
+  const isPositive = transactionType === 'RECEITA';
+  
+  const formattedamount = `${isPositive ? '+' : '-'}R$ ${Math.abs(amount).toFixed(2)}`;
 
   return (
     <div className={styles.wrapper}>
-      <button className={styles.backButton} onClick={() => navigate('/')}>
+      <button className={styles.backButton} onClick={() => navigate('/dashboard')}>
         <ArrowLeft size={16} />
         <span>Detalhes da Transação</span>
       </button>
@@ -40,11 +41,11 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
         <div className={styles.row}>
           <div className={styles.field}>
             <span className={styles.label}>Data da Transação</span>
-            <span className={styles.valueText}>{date}</span>
+            <span className={styles.amountText}>{date}</span>
           </div>
           <div className={styles.field}>
             <span className={styles.label}>Categoria</span>
-            <span className={styles.valueText}>{category}</span>
+            <span className={styles.amountText}>{category}</span>
           </div>
         </div>
 
@@ -52,7 +53,7 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
           <div className={styles.row}>
             <div className={styles.field}>
               <span className={styles.label}>Remetente</span>
-              <span className={styles.valueText}>{sender}</span>
+              <span className={styles.amountText}>{sender}</span>
             </div>
           </div>
         )}
@@ -61,13 +62,13 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
           <div className={styles.field}>
             <span className={styles.label}>Valor</span>
             <span className={isPositive ? styles.valuePositive : styles.valueNegative}>
-              {formattedValue}
+              {formattedamount}
             </span>
           </div>
           <div className={styles.field}>
             <span className={styles.label}>Tipo</span>
-            <span className={value > 0 ? styles.valuePositive : styles.valueNegative}>
-              {value > 0 ? 'Receita' : 'Despesa'}
+            <span className={transactionType == "RECEITA" ? styles.valuePositive : styles.valueNegative}>
+              {transactionType}
             </span>
           </div>
         </div>

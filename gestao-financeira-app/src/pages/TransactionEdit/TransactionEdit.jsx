@@ -17,25 +17,26 @@ export function TransactionEdit() {
   
   const navigate = useNavigate();
   const { id } = useParams();
+  console.log('ID da transação:', id);
   const { transactions, updateTransaction } = useContext(TransactionContext);
   const { categories, addCategory } = useContext(CategoryContext);
 
   // Carregar dados da transação
   useEffect(() => {
-    const transaction = transactions.find(tx => String(tx.id) === id);
+    const transaction = transactions.find(transaction => transaction.id === id);
     
     if (!transaction) {
       alert('Transação não encontrada');
-      navigate('/');
+      navigate('/dashboard');
       return;
     }
 
     setData(transaction.date);
     setRemetente(transaction.sender || '');
     setCategoria(transaction.category);
-    setValor(Math.abs(transaction.value).toString());
+    setValor(Math.abs(transaction.amount).toString());
     setDescricao(transaction.description || '');
-    setTipo(transaction.type);
+    setTipo(transaction.transactionType || 'RECEITA');
   }, [id, transactions, navigate]);
 
   const handleSaveCategory = (name) => {
@@ -56,32 +57,32 @@ export function TransactionEdit() {
     }
 
     const transactionUpdated = {
-      id: parseInt(id),
+      id: id,
       date: data,
       category: categoria,
       description: descricao,
-      value: tipo === 'receita' ? valorNumerico : -valorNumerico,
-      type: tipo,
-      sender: tipo === 'receita' ? remetente : undefined
+      amount: tipo === 'RECEITA' ? valorNumerico : -valorNumerico,
+      transactionType: tipo,
+      sender: tipo === 'RECEITA' ? remetente : undefined
     };
 
     updateTransaction(transactionUpdated);
     alert('Transação atualizada com sucesso!');
-    navigate(`/transacao/${id}`);
+    navigate(`/dashboard/transacao/${id}`);
   };
 
   const cancelar = () => {
-    navigate(`/transacao/${id}`);
+    navigate(`/dashboard/transacao/${id}`);
   };
 
   // Renderização condicional para campos específicos de receita
-  const isReceita = tipo === 'receita';
+  const isReceita = tipo === 'RECEITA';
 
   return (
     <div className={styles.wrapper}>
       <button
         className={styles.backButton}
-        onClick={() => navigate(`/transacao/${id}`)}
+        onClick={() => navigate(`/dashboard/transacao/${id}`)}
       >
         <ArrowLeft size={16} />
         <span>Voltar para Detalhes</span>
@@ -97,10 +98,10 @@ export function TransactionEdit() {
               value={tipo}
               onChange={e => setTipo(e.target.value)}
               className={styles.input}
-              disabled // Não permitimos mudar o tipo da transação, apenas editar seus detalhes
+              enable
             >
-              <option value="receita">Receita</option>
-              <option value="despesa">Despesa</option>
+              <option value="RECEITA">Receita</option>
+              <option value="DESPESA">Despesa</option>
             </select>
           </div>
 
