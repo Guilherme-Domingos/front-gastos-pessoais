@@ -11,11 +11,11 @@ export function TransactionList({ transactions = [] }) {
 
     // Garante que todas as propriedades sejam strings e não null/undefined antes de chamar toLowerCase()
     const description = String(transaction.description || '');
-    const category = String(transaction.category || '');
+    const date = String(transaction.date || '');
 
     return (
         description.toLowerCase().includes(searchLower) ||
-        category.toLowerCase().includes(searchLower) 
+        date.toLowerCase().includes(searchLower) 
     );
   }) : [];
 
@@ -51,10 +51,25 @@ export function TransactionList({ transactions = [] }) {
             <th className={styles.valueHeader}>Valor</th>
           </tr>
         </thead>
-        <tbody>
-          {filtered.map(tx => (
-            <TransactionItem key={tx.id} tx={tx} />
-          ))}
+        <tbody>          {
+          filtered.length === 0 ? (
+            <tr>
+              <td colSpan="3" className={styles.noResults}>
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <p>Sem transações encontradas</p>
+                </div>
+              </td>
+            </tr>
+          ) : (
+            filtered.map(tx => (
+              <TransactionItem key={tx.id} tx={tx} />
+            ))
+          )}
         </tbody>
       </table>
     </section>

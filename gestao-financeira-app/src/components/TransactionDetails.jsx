@@ -1,6 +1,8 @@
+import {useContext} from 'react';
 import { ArrowLeft, Edit3, Trash2 } from 'lucide-react';
 import styles from './TransactionDetails.module.css';
 import { useNavigate } from 'react-router-dom';
+import { CategoryContext } from '../contexts/CatogoryContext';
 
 /**
  * Props:
@@ -10,10 +12,15 @@ import { useNavigate } from 'react-router-dom';
  * - onDelete: () => void
  */
 export function TransactionDetails({ transaction, onEdit, onDelete }) {
+  const { categories } = useContext(CategoryContext);
   const navigate = useNavigate();
 
-  const { date, category, description, amount, transactionType, sender } = transaction;
+  const { date, categoryId, description, amount, transactionType, sender } = transaction;
   const isPositive = transactionType === 'RECEITA';
+  console.log('Transaction Details:', transaction);
+  
+  // Encontrar a categoria pelo ID
+  const categoryName = categories.find(cat => cat.id === categoryId)?.name || 'Categoria não encontrada';
   
   const formattedamount = `${isPositive ? '+' : '-'}R$ ${Math.abs(amount).toFixed(2)}`;
 
@@ -41,11 +48,10 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
         <div className={styles.row}>
           <div className={styles.field}>
             <span className={styles.label}>Data da Transação</span>
-            <span className={styles.amountText}>{date}</span>
-          </div>
-          <div className={styles.field}>
+            <span className={styles.valueText}>{date}</span>
+          </div>          <div className={styles.field}>
             <span className={styles.label}>Categoria</span>
-            <span className={styles.amountText}>{category}</span>
+            <span className={styles.valueText}>{categoryName}</span>
           </div>
         </div>
 
@@ -53,7 +59,7 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
           <div className={styles.row}>
             <div className={styles.field}>
               <span className={styles.label}>Remetente</span>
-              <span className={styles.amountText}>{sender}</span>
+              <span className={styles.valueText}>{sender}</span>
             </div>
           </div>
         )}

@@ -7,7 +7,6 @@ export function TransactionItem({ tx }) {
   const amount = parseFloat(tx.amount || 0);
   // Para despesas, consideramos negativo (para coloração)
   const isNegative = tx.transactionType === 'DESPESA';
-  const colorClass = isNegative ? styles.valueNegative : styles.valuePositive;
   const formatted = `${isNegative ? '-' : '+'}R$ ${Math.abs(amount).toFixed(2)}`;
   const navigate = useNavigate();
 
@@ -22,10 +21,10 @@ export function TransactionItem({ tx }) {
       onClick={handleClick}
       tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter') handleClick(); }}
-    >
-      <td>{tx.date}</td>
+    >      
+    <td>{tx.date}</td>
       <td>{tx.description || '-'}</td>
-      <td className={colorClass}>{formatted}</td>
+      <td style={{ color: isNegative ? '#ef4444' : '#10b981' }}>{formatted}</td>
     </tr>
   );
 }

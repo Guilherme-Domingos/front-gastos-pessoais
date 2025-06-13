@@ -29,11 +29,11 @@ export function TransactionEdit() {
       alert('Transação não encontrada');
       navigate('/dashboard');
       return;
-    }
-
+    }    
+    
     setData(transaction.date);
     setRemetente(transaction.sender || '');
-    setCategoria(transaction.category);
+    setCategoria(transaction.categoryId); // Usar categoryId em vez de category
     setValor(Math.abs(transaction.amount).toString());
     setDescricao(transaction.description || '');
     setTipo(transaction.transactionType || 'RECEITA');

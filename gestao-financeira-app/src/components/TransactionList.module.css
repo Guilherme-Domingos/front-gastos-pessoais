@@ -96,3 +96,38 @@
 .negative {
   color: #ef4444;
 }
+
+/* Estilo para mensagem de sem resultados */
+.noResults {
+  text-align: center;
+  padding: 2rem 0;
+  color: #6b7280;
+  font-size: 1rem;
+  background-color: #f9fafb;
+}
+
+.noResults div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.noResults svg {
+  color: #9ca3af;
+}
+
+.noResults p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Animação suave para a mensagem */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.noResults {
+  animation: fadeIn 0.5s ease-in-out;
+}
