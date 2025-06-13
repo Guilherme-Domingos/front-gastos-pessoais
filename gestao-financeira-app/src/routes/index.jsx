@@ -35,7 +35,7 @@ function TransactionDetailsWrapper() {
   const handleDelete = () => {
     if (confirm('Tem certeza que deseja excluir esta transação?')) {
       deleteTransaction(parseInt(id));
-      navigate('/');
+      navigate('/dashboard/');
     }
   };
 
@@ -65,8 +65,8 @@ export default function AppRoutes() {
         <Route path="/dashboard/receita/nova" element={<NewRecipe />} />        
         <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
-        <Route path="/dashboardtransacao/:id" element={<TransactionDetailsWrapper />} />
-        <Route path="/dashboardtransacao/:id/editar" element={<TransactionEdit />} />
+        <Route path="/dashboard/transacao/:id" element={<TransactionDetailsWrapper />} />
+        <Route path="/dashboard/transacao/:id/editar" element={<TransactionEdit />} />
       </Route>
     </Routes>
   );
