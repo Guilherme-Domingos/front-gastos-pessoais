@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import styles from './NewExpense.module.css';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CategoryContext } from '../../contexts/CatogoryContext';
+import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
 
 export function NewExpense() {

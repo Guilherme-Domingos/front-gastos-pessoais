@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import styles from './NewRecipe.module.css';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CategoryContext } from '../../contexts/CatogoryContext';
+import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
 
 export function NewRecipe() {
@@ -22,13 +22,12 @@ export function NewRecipe() {
     setValor('');
     setDescricao('');
   };
-
   const registrar = () => {
     // lógica de registro da receita
     console.log({ data, remetente, categoria, valor, descricao });
     limparCampos();
     alert('Receita registrada!');
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleSaveCategory = (name) => {
@@ -37,10 +36,9 @@ export function NewRecipe() {
   };
 
   return (
-    <div className={styles.wrapper}>
-      <button
+    <div className={styles.wrapper}>      <button
         className={styles.backButton}
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/dashboard')}
       >
         <ArrowLeft size={16} />
         <span>Nova Receita</span>

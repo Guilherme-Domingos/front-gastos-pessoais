@@ -2,7 +2,7 @@ import {useContext} from 'react';
 import { ArrowLeft, Edit3, Trash2 } from 'lucide-react';
 import styles from './TransactionDetails.module.css';
 import { useNavigate } from 'react-router-dom';
-import { CategoryContext } from '../contexts/CatogoryContext';
+import { CategoryContext } from '../contexts/CategoryContext';
 
 /**
  * Props:

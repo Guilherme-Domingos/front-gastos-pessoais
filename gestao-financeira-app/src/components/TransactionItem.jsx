@@ -9,7 +9,6 @@ export function TransactionItem({ tx }) {
   const isNegative = tx.transactionType === 'DESPESA';
   const formatted = `${isNegative ? '-' : '+'}R$ ${Math.abs(amount).toFixed(2)}`;
   const navigate = useNavigate();
-
   const handleClick = () => {
     navigate(`/dashboard/transacao/${tx.id}`);
   };

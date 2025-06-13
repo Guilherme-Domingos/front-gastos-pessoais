@@ -39,8 +39,13 @@ export function TransactionProvider({ children }) {
         ));
     };
 
-    const deleteTransaction = (id) => {
-        setTransactions(transactions.filter(tx => tx.id !== id));
+    async function deleteTransaction(id) {
+        try {
+            await api.delete(`/transaction/${id}`);
+            setTransactions((prevTransactions) => prevTransactions.filter(transaction => transaction.id !== id));
+        } catch (error) {
+           console.error("Erro ao excluir transação:", error); 
+        }
     };    
     
     const getBalance = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {

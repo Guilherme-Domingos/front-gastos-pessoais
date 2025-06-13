@@ -51,8 +51,8 @@ export function TransactionList({ transactions = [] }) {
             <th className={styles.valueHeader}>Valor</th>
           </tr>
         </thead>
-        <tbody>          {
-          filtered.length === 0 ? (
+        <tbody>          
+          {filtered.length === 0 ? (
             <tr>
               <td colSpan="3" className={styles.noResults}>
                 <div>

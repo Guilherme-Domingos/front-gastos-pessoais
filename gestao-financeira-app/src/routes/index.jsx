@@ -10,7 +10,7 @@ import { TransactionDetails } from '../components/TransactionDetails';
 import { useContext } from 'react';
 import { TransactionContext } from '../contexts/TransactionContext';
 
-const PAGE_TITLES = {  '/': 'Dashboard',
+const PAGE_TITLES = {  '/dashboard': 'Dashboard',
   '/dashboard/receita/nova': 'Nova Receita',
   '/dashboard/despesa/nova': 'Nova Despesa',
   '/dashboard/perfil': 'Perfil',
@@ -31,11 +31,11 @@ function TransactionDetailsWrapper() {
   const handleEdit = () => {
     navigate(`/dashboard/transacao/${id}/editar`);
   };
-
+  
   const handleDelete = () => {
     if (confirm('Tem certeza que deseja excluir esta transação?')) {
-      deleteTransaction(parseInt(id));
-      navigate('/dashboard/');
+      deleteTransaction(id);
+      navigate('/dashboard');
     }
   };
 
@@ -45,7 +45,7 @@ function TransactionDetailsWrapper() {
 function LayoutWrapper() {
   const location = useLocation();
   // Pega o pathname até o primeiro segmento relevante
-  const path = location.pathname === '/' ? '/' : location.pathname.split('/').slice(0, 2).join('/');
+  const path = location.pathname === '/dashboard' ? '/dashboard' : location.pathname.split('/').slice(0, 3).join('/');
   const pageTitle = PAGE_TITLES[path] || 'Gestão Financeira';
 
   return (
@@ -59,14 +59,14 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path='/login' element={<LoginPage />} />
-      <Route path='/cadastro' element={<SingUpPage />} />
+      <Route path='/cadastro' element={<SingUpPage />} />      
       <Route path='/dashboard' element={<LayoutWrapper />}>
         <Route index element={<Dashboard />} />
-        <Route path="/dashboard/receita/nova" element={<NewRecipe />} />        
+        <Route path="receita/nova" element={<NewRecipe />} />        
         <Route path="despesa/nova" element={<NewExpense/>} />
         <Route path="perfil" element={<h1>Perfil</h1>} />
-        <Route path="/dashboard/transacao/:id" element={<TransactionDetailsWrapper />} />
-        <Route path="/dashboard/transacao/:id/editar" element={<TransactionEdit />} />
+        <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
+        <Route path="transacao/:id/editar" element={<TransactionEdit />} />
       </Route>
     </Routes>
   );

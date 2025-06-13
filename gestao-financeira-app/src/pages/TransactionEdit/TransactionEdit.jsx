@@ -3,7 +3,7 @@ import styles from './TransactionEdit.module.css';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TransactionContext } from '../../contexts/TransactionContext';
-import { CategoryContext } from '../../contexts/CatogoryContext';
+import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
 
 export function TransactionEdit() {
