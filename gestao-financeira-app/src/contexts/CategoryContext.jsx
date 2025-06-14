@@ -11,7 +11,8 @@ export function CategoryProvider({ children }) {
     useEffect(() => {
           async function fetchCategories () {
             try {
-              const response = await api.get('/category');
+              const user = JSON.parse(localStorage.getItem('user'));
+              const response = await api.get(`/category/user/${user.id}`);
               // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
               const categoriesData = response.data.categories || response.data;
               console.log('Resposta da API:', categoriesData);

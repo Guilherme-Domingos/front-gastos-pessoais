@@ -20,11 +20,12 @@ export function TransactionProvider({ children }) {
     useEffect(() => {
       async function fetchTransactions () {
         try {
-          const response = await api.get('/transaction');
-          // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
-          const transactionsData = response.data.transactions || response.data;
-          setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
-          console.log('Dados carregados:', transactionsData);
+            const user = JSON.parse(localStorage.getItem('user'));
+            const response = await api.get(`user/${user.id}/transactions`);
+            // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
+            const transactionsData = response.data.transactions || response.data;
+            setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
+            console.log('Dados carregados:', transactionsData);
         } catch (error) {
           console.error("Erro ao buscar transações:", error);
         }

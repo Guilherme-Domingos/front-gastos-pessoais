@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Outlet, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/auth/LoginPage/LoginPage';
 import SingUpPage from '../pages/auth/SingupPage/SingUpPage';
 import { DefaultLayout } from '../layouts/DefaultLayout';
@@ -9,6 +9,7 @@ import { TransactionEdit } from '../pages/TransactionEdit/TransactionEdit';
 import { TransactionDetails } from '../components/TransactionDetails';
 import { useContext } from 'react';
 import { TransactionContext } from '../contexts/TransactionContext';
+import { ProtectedRoute } from './ProtectedRoute';
 
 const PAGE_TITLES = {  '/dashboard': 'Dashboard',
   '/dashboard/receita/nova': 'Nova Receita',
@@ -55,18 +56,24 @@ function LayoutWrapper() {
   );
 }
 
-export default function AppRoutes() {
+export default function AppRoutes() {  
   return (
     <Routes>
+      {/* Rotas públicas */}
       <Route path='/login' element={<LoginPage />} />
-      <Route path='/cadastro' element={<SingUpPage />} />      
-      <Route path='/dashboard' element={<LayoutWrapper />}>
-        <Route index element={<Dashboard />} />
-        <Route path="receita/nova" element={<NewRecipe />} />        
-        <Route path="despesa/nova" element={<NewExpense/>} />
-        <Route path="perfil" element={<h1>Perfil</h1>} />
-        <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
-        <Route path="transacao/:id/editar" element={<TransactionEdit />} />
+      <Route path='/cadastro' element={<SingUpPage />} />
+      
+      {/* Rotas protegidas */}
+      <Route element={<ProtectedRoute />}>
+        <Route path='/' element={<Navigate to="/dashboard" replace />} />
+        <Route path='/dashboard' element={<LayoutWrapper />}>
+          <Route index element={<Dashboard />} />
+          <Route path="receita/nova" element={<NewRecipe />} />        
+          <Route path="despesa/nova" element={<NewExpense/>} />
+          <Route path="perfil" element={<h1>Perfil</h1>} />
+          <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
+          <Route path="transacao/:id/editar" element={<TransactionEdit />} />
+        </Route>
       </Route>
     </Routes>
   );

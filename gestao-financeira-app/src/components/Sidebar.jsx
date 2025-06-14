@@ -2,6 +2,7 @@ import React from 'react';
 import { Home, ArrowUp, ArrowDown, BarChart, User, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
+import { useAuth } from '../contexts/AuthContext';
 
 const navItems = [
   { name: 'Início', to: '/dashboard', icon: <Home size={20} /> },
@@ -17,6 +18,14 @@ const analysisItems = [
 ];
 
 export function Sidebar() {
+  const { logout, user } = useAuth();
+  
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair?')) {
+      logout();
+    }
+  };
+  
   return (
     <aside className={styles.sidebar}>
       <div>
@@ -69,11 +78,15 @@ export function Sidebar() {
             ))}
           </div>
         </nav>
-      </div>
-
-      <div>
-        <p className={styles.userInfo}>Logado como João Buarque</p>
-        <button className={styles.logoutButton}>
+      </div>      <div>
+        <p className={styles.userInfo}>
+          Logado como {user ? user.name || user.email : 'Usuário'}
+        </p>
+        <button 
+          className={styles.logoutButton}
+          onClick={handleLogout}
+          title="Sair do sistema"
+        >
           <LogOut size={20} />
           <span>Sair</span>
         </button>
