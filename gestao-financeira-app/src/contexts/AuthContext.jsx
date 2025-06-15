@@ -13,7 +13,8 @@ export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); // Para saber quando a verificação inicial terminou
     const navigate = useNavigate();
-      // Roda uma vez quando a aplicação carrega para verificar se já existe um token
+    
+    // Roda uma vez quando a aplicação carrega para verificar se já existe um token
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
@@ -23,18 +24,30 @@ export function AuthProvider({ children }) {
             setIsAuthenticated(true);
         }
         setLoading(false); // Finaliza o carregamento inicial
-    }, []);
-
+    }, []);    
+    
     const login = async (email, password) => {
         try {
+            // Primeiro limpa estados anteriores
+            setIsAuthenticated(false);
+            setUser(null);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            
             const response = await api.post('/auth/login', { email, password });
             const { token, user: userData } = response.data;            
+            
+            // Garante que salvamos primeiro no localStorage
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
-
+            
+            console.log('Login bem sucedido, token salvo e usuário definido');
+            
+            // Atualizamos os estados que vão desencadear as requisições de dados
             setUser(userData);
             setIsAuthenticated(true);
-
+            
+            // Navegamos para o dashboard após atualizar os estados
             navigate('/dashboard');
         } catch (error) {
             console.error("Erro no login:", error);
@@ -62,7 +75,9 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
-    };    return (
+    };
+    
+    return (
         <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>

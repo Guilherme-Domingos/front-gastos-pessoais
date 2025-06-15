@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
+import { Api } from '../../services/api';
 
 export function NewRecipe() {
   const [data, setData] = useState('');
@@ -22,13 +23,35 @@ export function NewRecipe() {
     setValor('');
     setDescricao('');
   };
-  const registrar = () => {
-    // lógica de registro da receita
-    console.log({ data, remetente, categoria, valor, descricao });
-    limparCampos();
-    alert('Receita registrada!');
-    navigate('/dashboard');
-  };
+
+ const registrar = async () => {
+     const user = JSON.parse(localStorage.getItem('user'));
+     if (!user) {
+         alert('Você precisa estar logado para registrar uma receita.');
+         return;
+     }
+ 
+     const novaReceita = {
+         amount: parseFloat(valor),
+         description: descricao,
+         date: new Date(data).toISOString(), // Formato ISO 8601
+         type: 'RECEITA',
+         sender: remetente, 
+         userId: user.id, 
+         categoryId: parseInt(categoria) 
+     };
+ 
+     try {
+         const api = Api();
+         await api.post('/transaction', novaReceita);
+         alert('Receita registrada!');
+         navigate('/dashboard');
+     } catch (error) {
+         console.error('Erro ao registrar receita:', error);
+         alert('Falha ao registrar a receita.');
+     }
+ };
+ 
 
   const handleSaveCategory = (name) => {
     addCategory && addCategory(name);

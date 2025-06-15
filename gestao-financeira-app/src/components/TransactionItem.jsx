@@ -8,6 +8,11 @@ export function TransactionItem({ tx }) {
   // Para despesas, consideramos negativo (para coloração)
   const isNegative = tx.transactionType === 'DESPESA';
   const formatted = `${isNegative ? '-' : '+'}R$ ${Math.abs(amount).toFixed(2)}`;
+  const dataFormatted = new Date(tx.date).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/dashboard/transacao/${tx.id}`);
@@ -21,7 +26,7 @@ export function TransactionItem({ tx }) {
       tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter') handleClick(); }}
     >      
-    <td>{tx.date}</td>
+    <td>{dataFormatted}</td>
       <td>{tx.description || '-'}</td>
       <td style={{ color: isNegative ? '#ef4444' : '#10b981' }}>{formatted}</td>
     </tr>

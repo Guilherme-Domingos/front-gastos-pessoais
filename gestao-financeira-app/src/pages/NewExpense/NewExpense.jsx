@@ -4,6 +4,8 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
+import { TransactionContext } from '../../contexts/TransactionContext';
+import { Api } from '../../services/api';
 
 export function NewExpense() {
   const [data, setData] = useState('');
@@ -14,6 +16,7 @@ export function NewExpense() {
   const navigate = useNavigate();
 
   const { categories, addCategory } = useContext(CategoryContext);
+  const { adicionarTransacao } = useContext(TransactionContext);
 
   const limparCampos = () => {
     setData('');
@@ -22,13 +25,34 @@ export function NewExpense() {
     setDescricao('');
   };
 
-  const registrar = () => {
-    // lógica de registro da receita
-    console.log({ data, categoria, valor, descricao });
-    limparCampos();
-    alert('Despesa registrada!');
-    navigate('/dashboard');
-  };
+const registrar = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        alert('Você precisa estar logado para registrar uma despesa.');
+        return;
+    }
+
+    const novaDespesa = {
+        amount: parseFloat(valor),
+        description: descricao,
+        date: new Date(data).toISOString(), // Formato ISO 8601
+        type: 'DESPESA',
+        userId: user.id, // ID do usuário logado
+        categoryId: parseInt(categoria) // Garanta que a categoria seja um número, se necessário
+    };
+
+    try {
+        const api = Api();
+        const response = await api.post('/transaction', novaDespesa);
+        const {data} = response.data;
+        alert('Receita registrada!');
+        adicionarTransacao({id: data, ...novaDespesa}); // Atualiza o estado global
+        navigate('/dashboard');
+    } catch (error) {
+        console.error('Erro ao registrar despesa:', error);
+        alert('Falha ao registrar a despesa.');
+    }
+};
 
   const handleSaveCategory = (name) => {
     addCategory && addCategory(name);

@@ -16,6 +16,11 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
   const navigate = useNavigate();
 
   const { date, categoryId, description, amount, transactionType, sender } = transaction;
+  const formattedDate = new Date(date).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
   const isPositive = transactionType === 'RECEITA';
   console.log('Transaction Details:', transaction);
   
@@ -48,8 +53,9 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
         <div className={styles.row}>
           <div className={styles.field}>
             <span className={styles.label}>Data da Transação</span>
-            <span className={styles.valueText}>{date}</span>
-          </div>          <div className={styles.field}>
+            <span className={styles.valueText}>{formattedDate}</span>
+          </div>          
+          <div className={styles.field}>
             <span className={styles.label}>Categoria</span>
             <span className={styles.valueText}>{categoryName}</span>
           </div>

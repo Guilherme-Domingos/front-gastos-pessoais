@@ -36,7 +36,7 @@ export function TransactionEdit() {
     setCategoria(transaction.categoryId); // Usar categoryId em vez de category
     setValor(Math.abs(transaction.amount).toString());
     setDescricao(transaction.description || '');
-    setTipo(transaction.transactionType || 'RECEITA');
+    setTipo(transaction.type || 'RECEITA');
   }, [id, transactions, navigate]);
 
   const handleSaveCategory = (name) => {
@@ -62,7 +62,7 @@ export function TransactionEdit() {
       category: categoria,
       description: descricao,
       amount: tipo === 'RECEITA' ? valorNumerico : -valorNumerico,
-      transactionType: tipo,
+      type: tipo,
       sender: tipo === 'RECEITA' ? remetente : undefined
     };
 
