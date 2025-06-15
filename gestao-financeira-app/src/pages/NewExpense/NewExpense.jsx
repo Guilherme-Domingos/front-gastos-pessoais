@@ -15,7 +15,7 @@ export function NewExpense() {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { categories, addCategory } = useContext(CategoryContext);
+  const { categories, adicionarCategoria } = useContext(CategoryContext);
   const { adicionarTransacao } = useContext(TransactionContext);
 
   const limparCampos = () => {
@@ -27,26 +27,37 @@ export function NewExpense() {
 
 const registrar = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
+    const categoriaSelecionada = categories.find(cat => cat.name === categoria);
+
     if (!user) {
         alert('Você precisa estar logado para registrar uma despesa.');
         return;
     }
-
+    
     const novaDespesa = {
         amount: parseFloat(valor),
         description: descricao,
         date: new Date(data).toISOString(), // Formato ISO 8601
         type: 'DESPESA',
         userId: user.id, // ID do usuário logado
-        categoryId: parseInt(categoria) // Garanta que a categoria seja um número, se necessário
-    };
+        categoryId: categoriaSelecionada.id // Garanta que a categoria seja um número, se necessário
+      };
+
+    const novaDespesaToList = {
+        amount: parseFloat(valor),
+        description: descricao,
+        date: new Date(data).toISOString(), // Formato ISO 8601
+        transactionType: 'DESPESA',
+        userId: user.id, // ID do usuário logado
+        categoryId: categoriaSelecionada.id // Garanta que a categoria seja um número, se necessário
+    }; 
 
     try {
         const api = Api();
         const response = await api.post('/transaction', novaDespesa);
         const {data} = response.data;
         alert('Receita registrada!');
-        adicionarTransacao({id: data, ...novaDespesa}); // Atualiza o estado global
+        adicionarTransacao({id: data, ...novaDespesaToList}); // Atualiza o estado global
         navigate('/dashboard');
     } catch (error) {
         console.error('Erro ao registrar despesa:', error);
@@ -55,7 +66,26 @@ const registrar = async () => {
 };
 
   const handleSaveCategory = (name) => {
-    addCategory && addCategory(name);
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        alert('Você precisa estar logado para registrar uma despesa.');
+        return;
+    }
+
+    const novaCategoria = {
+      name,
+      userId: user.id 
+    };
+
+    try {
+      const api = Api();
+      api.post('/category', novaCategoria);
+    } catch (error) {
+      console.error('Erro ao adicionar categoria:', error);
+      alert('Falha ao adicionar a categoria.');
+    }
+
+    adicionarCategoria && adicionarCategoria(novaCategoria);
     setCategoria(name);
   };
 

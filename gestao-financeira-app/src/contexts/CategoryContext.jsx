@@ -4,7 +4,7 @@ import { AuthContext } from "./AuthContext";
 
 export const CategoryContext = createContext({ 
   categories: [],
-  addCategory: () => {} 
+  adicionarCategoria: () => {} 
 });
 
 const api = Api();

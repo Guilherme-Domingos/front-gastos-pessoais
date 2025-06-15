@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
+import { TransactionContext } from '../../contexts/TransactionContext';
 import { Api } from '../../services/api';
 
 export function NewRecipe() {
@@ -14,7 +15,9 @@ export function NewRecipe() {
   const [descricao, setDescricao] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { categories, addCategory } = useContext(CategoryContext);
+
+  const { adicionarTransacao } = useContext(TransactionContext);
+  const { categories, adicionarCategoria } = useContext(CategoryContext);
 
   const limparCampos = () => {
     setData('');
@@ -25,26 +28,40 @@ export function NewRecipe() {
   };
 
  const registrar = async () => {
-     const user = JSON.parse(localStorage.getItem('user'));
-     if (!user) {
-         alert('Você precisa estar logado para registrar uma receita.');
-         return;
-     }
+      const user = JSON.parse(localStorage.getItem('user'));
+      const categoriaSelecionada = categories.find(cat => cat.name === categoria);
+
+      if (!user) {
+          alert('Você precisa estar logado para registrar uma receita.');
+          return;
+      }
  
-     const novaReceita = {
-         amount: parseFloat(valor),
-         description: descricao,
-         date: new Date(data).toISOString(), // Formato ISO 8601
-         type: 'RECEITA',
-         sender: remetente, 
-         userId: user.id, 
-         categoryId: parseInt(categoria) 
-     };
+      const novaReceita = {
+          amount: parseFloat(valor),
+          description: descricao,
+          date: new Date(data).toISOString(), // Formato ISO 8601
+          type: 'RECEITA',
+          sender: remetente, 
+          userId: user.id, 
+          categoryId: categoriaSelecionada.id  
+      };
  
+      const novaReceitaToList = {
+          amount: parseFloat(valor),
+          description: descricao,
+          date: new Date(data).toISOString(), // Formato ISO 8601
+          transactionType: 'RECEITA',
+          sender: remetente, 
+          userId: user.id, 
+          categoryId: categoriaSelecionada.id
+      };
+
      try {
          const api = Api();
-         await api.post('/transaction', novaReceita);
+         const response = await api.post('/transaction', novaReceita);
+         const {data} = response.data;
          alert('Receita registrada!');
+          adicionarTransacao({id: data, ...novaReceitaToList});
          navigate('/dashboard');
      } catch (error) {
          console.error('Erro ao registrar receita:', error);
@@ -54,9 +71,28 @@ export function NewRecipe() {
  
 
   const handleSaveCategory = (name) => {
-    addCategory && addCategory(name);
-    setCategoria(name);
-  };
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+          alert('Você precisa estar logado para registrar uma despesa.');
+          return;
+      }
+  
+      const novaCategoria = {
+        name,
+        userId: user.id 
+      };
+  
+      try {
+        const api = Api();
+        api.post('/category', novaCategoria);
+      } catch (error) {
+        console.error('Erro ao adicionar categoria:', error);
+        alert('Falha ao adicionar a categoria.');
+      }
+  
+      adicionarCategoria && adicionarCategoria(novaCategoria);
+      setCategoria(name);
+    };
 
   return (
     <div className={styles.wrapper}>      <button
