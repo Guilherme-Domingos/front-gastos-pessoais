@@ -4,9 +4,7 @@ import { Api } from "../services/api";
 import { AuthContext } from "./AuthContext";
 
 export const TransactionContext = createContext({ 
-    transactions: [], 
-    filtro: '', 
-    setFiltro: () => {},
+    transactions: [],
     updateTransaction: () => {},
     deleteTransaction: () => {},
     adicionarTransacao: () => {},
@@ -18,7 +16,6 @@ export const TransactionContext = createContext({
 const api = Api();
 
 export function TransactionProvider({ children }) {
-    const [filtro, setFiltro] = useState('');
     const [transactions, setTransactions] = useState([]);
     const { isAuthenticated, user } = useContext(AuthContext);
     
@@ -53,12 +50,14 @@ export function TransactionProvider({ children }) {
         }
     }, [isAuthenticated, user]);
 
+    // atualizar transações
     const updateTransaction = (updatedTransaction) => {
         setTransactions(transactions.map(tx => 
             tx.id === updatedTransaction.id ? updatedTransaction : tx
         ));
     };
 
+    // deletar transações
     async function deleteTransaction(id) {
         try {
             await api.delete(`/transaction/${id}`);
@@ -68,6 +67,7 @@ export function TransactionProvider({ children }) {
         }
     };
 
+    // adicionar transações
     function adicionarTransacao(transacao) {
         // Adiciona a nova transação ao estado
         setTransactions((prevTransactions) => [...prevTransactions, transacao]);
@@ -125,12 +125,10 @@ export function TransactionProvider({ children }) {
 
     return (
         <TransactionContext.Provider value={{ 
-            transactions, 
-            filtro, 
+            transactions,
             getBalance, 
             getTotalExpenses, 
-            getTotalIncome, 
-            setFiltro,
+            getTotalIncome,
             updateTransaction,
             deleteTransaction,
             fetchTransactions, // Exportando a função para permitir atualização manual

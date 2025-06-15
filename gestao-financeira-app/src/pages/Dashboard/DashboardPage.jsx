@@ -12,7 +12,7 @@ export function Dashboard() {
     <div className={styles.container}>
       <div className={styles.cardsContainer}>        
         <Card
-          title="Saldo do Mês"
+          title="Saldo total"
           icon={<CreditCard size={20} />}
           value={`R$ ${getBalance.toFixed(2)}`}
         />

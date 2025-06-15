@@ -19,6 +19,7 @@ export function TransactionList({ transactions = [] }) {
     );
   }) : [];
 
+  filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); // Ordena por data decrescente
 
   return (
     <section className={styles.container}>
