@@ -70,7 +70,7 @@ export function NewRecipe() {
  };
  
 
-  const handleSaveCategory = (name) => {
+  const handleSaveCategory = async (name) => {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
           alert('Você precisa estar logado para registrar uma despesa.');
@@ -84,14 +84,15 @@ export function NewRecipe() {
   
       try {
         const api = Api();
-        api.post('/category', novaCategoria);
+        const response = await api.post('/category', novaCategoria);
+        const { data } = response.data;
+        adicionarCategoria({id: data, ...novaCategoria});
+        setCategoria(name);
       } catch (error) {
         console.error('Erro ao adicionar categoria:', error);
         alert('Falha ao adicionar a categoria.');
       }
   
-      adicionarCategoria && adicionarCategoria(novaCategoria);
-      setCategoria(name);
     };
 
   return (

@@ -46,7 +46,7 @@ export function CategoryProvider({ children }) {
     }, [isAuthenticated, user]);
 
     function adicionarCategoria(categoria) {
-        // Adiciona a nova transação ao estado
+        // Adiciona a nova categoria ao estado
         setCategories((prevCategories) => [...prevCategories, categoria]);
     }
 

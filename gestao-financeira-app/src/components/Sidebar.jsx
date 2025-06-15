@@ -78,7 +78,8 @@ export function Sidebar() {
             ))}
           </div>
         </nav>
-      </div>      <div>
+      </div>      
+      <div>
         <p className={styles.userInfo}>
           Logado como {user ? user.name || user.email : 'Usuário'}
         </p>

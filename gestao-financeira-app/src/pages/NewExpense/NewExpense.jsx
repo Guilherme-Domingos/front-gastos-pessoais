@@ -65,7 +65,7 @@ const registrar = async () => {
     }
 };
 
-  const handleSaveCategory = (name) => {
+  const handleSaveCategory = async (name) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
         alert('Você precisa estar logado para registrar uma despesa.');
@@ -79,14 +79,15 @@ const registrar = async () => {
 
     try {
       const api = Api();
-      api.post('/category', novaCategoria);
+      const response = await api.post('/category', novaCategoria);
+      const { data } = response.data;
+      console.log('Categoria adicionada:', data);
+      adicionarCategoria({id: data, ...novaCategoria});
+      setCategoria(name);
     } catch (error) {
       console.error('Erro ao adicionar categoria:', error);
       alert('Falha ao adicionar a categoria.');
     }
-
-    adicionarCategoria && adicionarCategoria(novaCategoria);
-    setCategoria(name);
   };
 
   return (
@@ -119,7 +120,7 @@ const registrar = async () => {
                 className={styles.input}
               >
                 <option value="">Selecione...</option>
-                {categories && categories.map(cat =>
+                {categories.map(cat =>
                   <option key={cat.id} value={cat.name}>{cat.name}</option>
                 )}
               </select>
