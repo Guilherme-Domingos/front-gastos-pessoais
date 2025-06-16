@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TransactionContext } from '../../contexts/TransactionContext';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
+import { Api } from '../../services/api';
 
 export function TransactionEdit() {
   const [data, setData] = useState('');
@@ -17,58 +18,95 @@ export function TransactionEdit() {
   
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log('ID da transação:', id);
+  // console.log('ID da transação:', id);
   const { transactions, updateTransaction } = useContext(TransactionContext);
-  const { categories, addCategory } = useContext(CategoryContext);
+  const { categories, adicionarCategoria } = useContext(CategoryContext);
 
   // Carregar dados da transação
-  useEffect(() => {
+  useEffect(() => {    
+    
     const transaction = transactions.find(transaction => transaction.id === id);
     
     if (!transaction) {
       alert('Transação não encontrada');
       navigate('/dashboard');
       return;
-    }    
+    }
     
-    setData(transaction.date);
+    // Carregar dados da categoria pelo ID
+    const category = categories.find(cat => cat.id === transaction.categoryId) || {};
+    
+    const {date, amount, description, transactionType} = transaction;
+
+    // Formatar data para o formato YYYY-MM-DD com tratamento de erro
+    const dataFormatted = new Date(date).toISOString().split('T')[0];
+    
+    setData(dataFormatted);
     setRemetente(transaction.sender || '');
-    setCategoria(transaction.categoryId); // Usar categoryId em vez de category
-    setValor(Math.abs(transaction.amount).toString());
-    setDescricao(transaction.description || '');
-    setTipo(transaction.type || 'RECEITA');
+    setCategoria(category.name);
+    setValor(Math.abs(amount).toString());
+    setDescricao(description || '');
+    setTipo(transactionType);
   }, [id, transactions, navigate]);
 
-  const handleSaveCategory = (name) => {
-    addCategory && addCategory(name);
-    setCategoria(name);
-  };
+  const handleSaveCategory = async (name) => {
+        const novaCategoria = {
+          name,
+          userId: user.id 
+        };
+    
+        try {
+          const api = Api();
+          const response = await api.post('/category', novaCategoria);
+          const { data } = response.data;
+          adicionarCategoria({id: data, ...novaCategoria});
+          setCategoria(name);
+        } catch (error) {
+          console.error('Erro ao adicionar categoria:', error);
+          alert('Falha ao adicionar a categoria.');
+        }
+    
+      };
 
-  const salvarAlteracoes = () => {
-    if (!data || !categoria || !valor) {
-      alert('Por favor, preencha os campos obrigatórios: Data, Categoria e Valor');
-      return;
-    }
+  const salvarAlteracoes = async () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const categoryId = categories.find(cat => cat.name === categoria)?.id;
 
-    const valorNumerico = parseFloat(valor);
-    if (isNaN(valorNumerico)) {
-      alert('Por favor, insira um valor válido');
-      return;
-    }
+      if (!user) {
+          alert('Você precisa estar logado para registrar uma receita.');
+          return;
+      }
 
-    const transactionUpdated = {
-      id: id,
-      date: data,
-      category: categoria,
-      description: descricao,
-      amount: tipo === 'RECEITA' ? valorNumerico : -valorNumerico,
-      type: tipo,
-      sender: tipo === 'RECEITA' ? remetente : undefined
-    };
+      if (!data || !categoria || !valor) {
+        alert('Por favor, preencha os campos obrigatórios: Data, Categoria e Valor');
+        return;
+      }
 
-    updateTransaction(transactionUpdated);
-    alert('Transação atualizada com sucesso!');
-    navigate(`/dashboard/transacao/${id}`);
+      const transactionUpdated = {
+        id: id,
+        date: new Date(data).toISOString(), // Formato ISO 8601
+        amount: parseFloat(valor),
+        description: descricao,
+        transactionType: tipo, // Usando transactionType em vez de type para consistência
+        sender: tipo === 'RECEITA' ? remetente : undefined,
+        categoryId: categoryId
+      };
+
+      try {
+        const api = Api();
+        const response = await api.put(`/transaction/${id}`, transactionUpdated);
+        
+        // Verificar se a resposta está no formato esperado
+        console.log('Resposta da API:', response.data);
+        
+        // Atualizar o estado com a transação completa
+        updateTransaction(transactionUpdated);
+        
+        alert('Transação atualizada com sucesso!');
+        navigate(`/dashboard/transacao/${id}`);
+      } catch (error) {
+        
+      }
   };
 
   const cancelar = () => {
@@ -93,12 +131,11 @@ export function TransactionEdit() {
 
         <div className={styles.grid}>
           <div className={styles.field}>
-            <label className={styles.label}>Tipo</label>
+            <label className={styles.label}>Tipo</label>            
             <select
               value={tipo}
               onChange={e => setTipo(e.target.value)}
               className={styles.input}
-              enable
             >
               <option value="RECEITA">Receita</option>
               <option value="DESPESA">Despesa</option>
@@ -137,7 +174,7 @@ export function TransactionEdit() {
                 className={styles.input}
               >
                 <option value="">Selecione...</option>
-                {categories && categories.map(cat =>
+                {categories.map(cat =>
                   <option key={cat.id} value={cat.name}>{cat.name}</option>
                 )}
               </select>

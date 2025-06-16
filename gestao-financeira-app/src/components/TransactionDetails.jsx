@@ -16,11 +16,8 @@ export function TransactionDetails({ transaction, onEdit, onDelete }) {
   const navigate = useNavigate();
 
   const { date, categoryId, description, amount, transactionType, sender } = transaction;
-  const formattedDate = new Date(date).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
+  const formattedDate = date.slice(0, 10).split('-').reverse().join('/');
+
   const isPositive = transactionType === 'RECEITA';
   console.log('Transaction Details:', transaction);
   

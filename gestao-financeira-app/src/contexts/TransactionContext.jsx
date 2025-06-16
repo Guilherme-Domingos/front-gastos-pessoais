@@ -48,13 +48,20 @@ export function TransactionProvider({ children }) {
             // Limpa as transações quando o usuário deslogar
             setTransactions([]);
         }
-    }, [isAuthenticated, user]);
-
-    // atualizar transações
+    }, [isAuthenticated, user]);   
+    
+    // atualizar transações com tratamento de erro
     const updateTransaction = (updatedTransaction) => {
-        setTransactions(transactions.map(tx => 
-            tx.id === updatedTransaction.id ? updatedTransaction : tx
-        ));
+        // Usar o padrão funcional para garantir que estamos trabalhando com o estado mais recente
+        setTransactions(prevTransactions => 
+            prevTransactions.map(tx => {
+                if (tx.id === updatedTransaction.id) {
+                    // Mesclar as propriedades para preservar campos que possam não estar no objeto atualizado
+                    return { ...tx, ...updatedTransaction };
+                }
+                return tx;
+            })
+        );
     };
 
     // deletar transações
