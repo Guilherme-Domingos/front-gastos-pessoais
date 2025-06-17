@@ -5,25 +5,37 @@ import { AuthContext } from "./AuthContext";
 
 export const TransactionContext = createContext({ 
     transactions: [],
+    filteredTransactions: [], // Transações filtradas por mês
     updateTransaction: () => {},
     deleteTransaction: () => {},
     adicionarTransacao: () => {},
+    filterTransactionsByMonth: () => {}, // Nova função para filtrar por mês
+    clearMonthFilter: () => {}, // Nova função para limpar o filtro
+    selectedMonth: null, // Mês selecionado para filtro
+    selectedYear: null, // Ano selecionado para filtro
     getBalance: 0,
     getTotalIncome: 0,
-    getTotalExpenses: 0
+    getTotalExpenses: 0,
+    isLoading: false // Indicador de carregamento
 });
 
 const api = Api();
 
 export function TransactionProvider({ children }) {
     const [transactions, setTransactions] = useState([]);
+    const [filteredTransactions, setFilteredTransactions] = useState([]); // Estado para transações filtradas
+    const [selectedMonth, setSelectedMonth] = useState(null); // Estado para mês selecionado (0-11)
+    const [selectedYear, setSelectedYear] = useState(null); // Estado para ano selecionado
+    const [isLoading, setIsLoading] = useState(false); // Estado para indicar carregamento
     const { isAuthenticated, user } = useContext(AuthContext);
     
-    // Função para buscar transações
+    // Função para buscar todas as transações
     const fetchTransactions = async () => {
         try {
+            setIsLoading(true);
             if (!user || !user.id) {
                 console.log("Usuário não encontrado, não é possível buscar transações");
+                setIsLoading(false);
                 return;
             }
             
@@ -32,11 +44,89 @@ export function TransactionProvider({ children }) {
             
             // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
             const transactionsData = response.data.transactions || response.data;
-            setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
+            const transactionsList = Array.isArray(transactionsData) ? transactionsData : [];
+            setTransactions(transactionsList);
+            setFilteredTransactions(transactionsList); // Inicialmente, as transações filtradas são iguais a todas
             console.log('Dados carregados:', transactionsData);
+            setIsLoading(false);
         } catch (error) {
             console.error("Erro ao buscar transações:", error);
+            setIsLoading(false);
         }
+    };
+
+    // Função para buscar transações filtradas por mês e ano do servidor
+    // Esta função realiza uma chamada à API para obter dados filtrados
+    async function fetchTransactionsByMonth(year, month){
+        try {
+            setIsLoading(true);
+            if (!user || !user.id) {
+                console.log("Usuário não encontrado, não é possível buscar transações");
+                setIsLoading(false);
+                return;
+            }
+            
+            console.log(`Buscando transações de ${month+1}/${year} para o usuário:`, user.id);
+            const response = await api.get(`user/${user.id}/transactions/${year}/${month+1}`);
+            console.log('Resposta da API (Mensal):', response.data);
+            
+            // Verifica se a resposta tem a estrutura esperada (pode estar aninhada)
+            const transactionsData = response.data.transactions || response.data;
+            const filteredList = Array.isArray(transactionsData) ? transactionsData : [];
+            setFilteredTransactions(filteredList);
+            
+            // Atualiza os estados de filtro
+            setSelectedMonth(month);
+            setSelectedYear(year);
+            
+            console.log('Dados filtrados carregados:', filteredList);
+            setIsLoading(false);
+            return filteredList;
+        } catch (error) {
+            console.error("Erro ao buscar transações por mês:", error);
+            setIsLoading(false);
+            return [];
+        }
+    };
+    
+    // Função para filtrar as transações já carregadas localmente
+    // Essa função não faz uma nova chamada à API, apenas filtra os dados já existentes
+    const filterTransactionsByMonth = (year, month) => {
+        if (year === null || month === null) {
+            clearMonthFilter();
+            return;
+        }
+        
+        try {
+            // Se a API suporta filtro por mês, use a função que busca do servidor
+            fetchTransactionsByMonth(year, month);
+            
+            // Caso contrário, filtre localmente
+            const filtered = transactions.filter(transaction => {
+                try {
+                    const date = new Date(transaction.date);
+                    return date.getFullYear() === year && date.getMonth() === month;
+                } catch (error) {
+                    console.error("Erro ao processar data:", error, transaction);
+                    return false;
+                }
+            });
+            
+            setFilteredTransactions(filtered);
+            setSelectedMonth(month);
+            setSelectedYear(year);
+            
+            console.log(`Transações filtradas para ${month+1}/${year}:`, filtered);
+        } catch (error) {
+            console.error("Erro ao filtrar transações:", error);
+        }
+    };
+    
+    // Limpa o filtro de mês e mostra todas as transações novamente
+    const clearMonthFilter = () => {
+        setFilteredTransactions(transactions);
+        setSelectedMonth(null);
+        setSelectedYear(null);
     };
     
     // Efeito que escuta mudanças na autenticação
@@ -47,9 +137,11 @@ export function TransactionProvider({ children }) {
         } else {
             // Limpa as transações quando o usuário deslogar
             setTransactions([]);
+            setFilteredTransactions([]);
         }
     }, [isAuthenticated, user]);   
     
+
     // atualizar transações com tratamento de erro
     const updateTransaction = (updatedTransaction) => {
         // Usar o padrão funcional para garantir que estamos trabalhando com o estado mais recente
@@ -80,66 +172,53 @@ export function TransactionProvider({ children }) {
         setTransactions((prevTransactions) => [...prevTransactions, transacao]);
     }
 
-    // Cáuculos de saldo, total de receitas e despesas --------------------------------------------------------------
-    
+    // Cálculos de saldo, receitas e despesas baseados nas transações filtradas
     const getBalance = useMemo(() => {
-        if (!Array.isArray(transactions)) return 0;
+        if (!Array.isArray(filteredTransactions)) return 0;
 
-        return transactions.reduce((acc, transaction) => {
+        return filteredTransactions.reduce((acc, transaction) => {
             // Se for receita, adiciona; se for despesa, subtrai
             const amount = parseFloat(transaction.amount || 0);
             return transaction.transactionType === 'RECEITA' ? acc + amount : acc - amount;
         }, 0);
-    }, [transactions]);
+    }, [filteredTransactions]);
     
-    // const getBalance = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
-    //     // Se for receita, adiciona; se for despesa, subtrai
-    //     const amount = parseFloat(transaction.amount || 0);
-    //     return transaction.transactionType === 'RECEITA' ? acc + amount : acc - amount;
-    // }, 0) : 0;
-
     const getTotalIncome = useMemo(() => {
-        if (!Array.isArray(transactions)) return 0;
+        if (!Array.isArray(filteredTransactions)) return 0;
 
-        return transactions.reduce((acc, transaction) => {
+        return filteredTransactions.reduce((acc, transaction) => {
             // Soma apenas as receitas
             const amount = parseFloat(transaction.amount || 0);
             return transaction.transactionType === 'RECEITA' ? acc + amount : acc;
         }, 0);
-    }, [transactions]);
-
-    // const getTotalIncome = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
-    //     // Soma apenas as receitas
-    //     const amount = parseFloat(transaction.amount || 0);
-    //     return transaction.transactionType === 'RECEITA' ? acc + amount : acc;
-    // }, 0) : 0;
+    }, [filteredTransactions]);
 
     const getTotalExpenses = useMemo(() => {
-        if (!Array.isArray(transactions)) return 0;
+        if (!Array.isArray(filteredTransactions)) return 0;
 
-        return transactions.reduce((acc, transaction) => {
+        return filteredTransactions.reduce((acc, transaction) => {
             // Soma apenas as despesas
             const amount = parseFloat(transaction.amount || 0);
             return transaction.transactionType === 'DESPESA' ? acc + amount : acc;
         }, 0);
-    }, [transactions]);
-
-    // const getTotalExpenses = Array.isArray(transactions) ? transactions.reduce((acc, transaction) => {
-    //     // Soma apenas as despesas
-    //     const amount = parseFloat(transaction.amount || 0);
-    //     return transaction.transactionType === 'DESPESA' ? acc + amount : acc;
-    // }, 0) : 0;
+    }, [filteredTransactions]);
 
     return (
         <TransactionContext.Provider value={{ 
             transactions,
+            filteredTransactions,
+            filterTransactionsByMonth,
+            clearMonthFilter,
+            selectedMonth,
+            selectedYear,
             getBalance, 
             getTotalExpenses, 
             getTotalIncome,
             updateTransaction,
             deleteTransaction,
-            fetchTransactions, // Exportando a função para permitir atualização manual
-            adicionarTransacao
+            fetchTransactions,
+            adicionarTransacao,
+            isLoading
         }}>
             {children}
         </TransactionContext.Provider>

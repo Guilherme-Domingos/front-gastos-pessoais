@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const logout = () => {        // Opcional: Chamar a rota de logout do backend se houver alguma lógica lá
+    const logout = () => {
         // api.post('/auth/logout'); 
         
         localStorage.removeItem('token');

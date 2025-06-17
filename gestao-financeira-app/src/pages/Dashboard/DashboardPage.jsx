@@ -6,10 +6,35 @@ import { TransactionList } from '../../components/TransactionList';
 import { TransactionContext } from '../../contexts/TransactionContext';
 
 export function Dashboard() {
-  const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useContext(TransactionContext);
+  const { 
+    getBalance, 
+    getTotalIncome, 
+    getTotalExpenses,
+    selectedMonth,
+    selectedYear
+  } = useContext(TransactionContext);
+
+  // Formatar o título do período selecionado
+  const getFilterPeriodTitle = () => {
+    if (selectedMonth !== null && selectedYear !== null) {
+      const months = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+      return `${months[selectedMonth]} ${selectedYear}`;
+    }
+    return "Geral";
+  };
 
   return (
     <div className={styles.container}>
+      <div className={styles.dashboardHeader}>
+        <h1>Dashboard Financeiro</h1>
+        {selectedMonth !== null && selectedYear !== null && (
+          <span className={styles.periodBadge}>{getFilterPeriodTitle()}</span>
+        )}
+      </div>
+      
       <div className={styles.cardsContainer}>        
         <Card
           title="Saldo total"
@@ -29,7 +54,7 @@ export function Dashboard() {
           valueColor={styles.negative}
         />
       </div>
-      <TransactionList transactions={transactions} />
+      <TransactionList />
     </div>  
   );
 }
