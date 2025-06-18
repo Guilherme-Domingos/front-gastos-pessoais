@@ -24,5 +24,24 @@ api.interceptors.request.use(
     }
 );
 
+api.interceptors.response.use(
+  // Se a resposta for bem-sucedida, apenas a retorna
+  response => response,
+  // Se ocorrer um erro, executa esta função
+  error => {
+    // Verifica se o erro é o 401 (Não Autorizado)
+    if (error.response && error.response.status === 401) {
+      console.log('Token expirado ou inválido. Realizando logout...');
+      // Limpa os dados de autenticação do armazenamento local
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Redireciona o usuário para a tela de login
+      window.location.href = '/login';
+    }
+    // Para outros erros, apenas rejeita a promise
+    return Promise.reject(error);
+  }
+);
+
 // Exportar a instância única
 export const Api = () => api;

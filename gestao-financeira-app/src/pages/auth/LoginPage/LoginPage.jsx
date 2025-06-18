@@ -6,8 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 function LoginPage() {  const [email, setEmail] = useState('');
   const [password, setSenha] = useState('');
   const [error, setError] = useState('');
-  const { login, isAuthenticated, loading: authLoading } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login, isAuthenticated, } = useAuth();
   const navigate = useNavigate(); // Adicionando o hook useNavigate
 
   // Declaramos todos os hooks antes de qualquer retorno condicional
@@ -23,7 +22,6 @@ function LoginPage() {  const [email, setEmail] = useState('');
   
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setError('');
     
     try {
@@ -42,8 +40,6 @@ function LoginPage() {  const [email, setEmail] = useState('');
       }
       
       setError('Falha na autenticação. Verifique suas credenciais.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
   
