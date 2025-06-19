@@ -1,0 +1,112 @@
+.profileContainer {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.profileContainer h1 {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 0.5rem;
+}
+
+.profileContainer h2 {
+  font-size: 1.3rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.chartControls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.chartButton {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.chartButton:hover {
+  background-color: #e5e7eb;
+}
+
+.chartButton.active {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #2563eb;
+}
+
+.chartContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.loadingContainer, .errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.loadingContainer p {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.errorContainer p {
+  color: #ef4444;
+  padding: 1rem;
+  background-color: #fee2e2;
+  border-radius: 0.375rem;
+}
+
+.tableContainer {
+  margin-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+}
+
+.tableContainer h3 {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+}
+
+.categoryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.categoryTable th, .categoryTable td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.categoryTable th {
+  text-align: left;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.categoryTable tr:hover {
+  background-color: #f9fafb;
+}
+
+.value {
+  text-align: right;
+  font-weight: 500;
+}

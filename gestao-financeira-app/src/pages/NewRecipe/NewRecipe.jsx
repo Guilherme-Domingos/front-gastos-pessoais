@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
 import { TransactionContext } from '../../contexts/TransactionContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import { Api } from '../../services/api';
 
 export function NewRecipe() {
@@ -18,6 +19,7 @@ export function NewRecipe() {
 
   const { adicionarTransacao } = useContext(TransactionContext);
   const { categories, adicionarCategoria } = useContext(CategoryContext);
+  const { user } = useContext(AuthContext);
 
   const limparCampos = () => {
     setData('');
@@ -28,7 +30,7 @@ export function NewRecipe() {
   };
 
  const registrar = async () => {
-      const user = JSON.parse(localStorage.getItem('user'));
+      // const user = JSON.parse(localStorage.getItem('user'));
       const categoriaSelecionada = categories.find(cat => cat.name === categoria);
 
       if (!user) {
@@ -71,7 +73,7 @@ export function NewRecipe() {
  
 
   const handleSaveCategory = async (name) => {
-      const user = JSON.parse(localStorage.getItem('user'));
+      // const user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
           alert('Você precisa estar logado para registrar uma despesa.');
           return;
@@ -96,7 +98,8 @@ export function NewRecipe() {
     };
 
   return (
-    <div className={styles.wrapper}>      <button
+    <div className={styles.wrapper}>      
+    <button
         className={styles.backButton}
         onClick={() => navigate('/dashboard')}
       >

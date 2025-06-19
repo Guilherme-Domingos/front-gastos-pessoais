@@ -15,27 +15,24 @@ export const TransactionContext = createContext({
     selectedYear: null, // Ano selecionado para filtro
     getBalance: 0,
     getTotalIncome: 0,
-    getTotalExpenses: 0,
-    isLoading: false // Indicador de carregamento
+    getTotalExpenses: 0
 });
 
 const api = Api();
 
 export function TransactionProvider({ children }) {
     const [transactions, setTransactions] = useState([]);
+    const [ transactionsMonth, setTransactionsMonth ] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]); // Estado para transações filtradas
     const [selectedMonth, setSelectedMonth] = useState(null); // Estado para mês selecionado (0-11)
     const [selectedYear, setSelectedYear] = useState(null); // Estado para ano selecionado
-    const [isLoading, setIsLoading] = useState(false); // Estado para indicar carregamento
     const { isAuthenticated, user } = useContext(AuthContext);
     
     // Função para buscar todas as transações
     const fetchTransactions = async () => {
         try {
-            setIsLoading(true);
             if (!user || !user.id) {
                 console.log("Usuário não encontrado, não é possível buscar transações");
-                setIsLoading(false);
                 return;
             }
             
@@ -48,10 +45,8 @@ export function TransactionProvider({ children }) {
             setTransactions(transactionsList);
             setFilteredTransactions(transactionsList); // Inicialmente, as transações filtradas são iguais a todas
             console.log('Dados carregados:', transactionsData);
-            setIsLoading(false);
         } catch (error) {
             console.error("Erro ao buscar transações:", error);
-            setIsLoading(false);
         }
     };
 
@@ -59,10 +54,8 @@ export function TransactionProvider({ children }) {
     // Esta função realiza uma chamada à API para obter dados filtrados
     async function fetchTransactionsByMonth(year, month){
         try {
-            setIsLoading(true);
             if (!user || !user.id) {
                 console.log("Usuário não encontrado, não é possível buscar transações");
-                setIsLoading(false);
                 return;
             }
             
@@ -80,11 +73,9 @@ export function TransactionProvider({ children }) {
             setSelectedYear(year);
             
             console.log('Dados filtrados carregados:', filteredList);
-            setIsLoading(false);
             return filteredList;
         } catch (error) {
             console.error("Erro ao buscar transações por mês:", error);
-            setIsLoading(false);
             return [];
         }
     };
@@ -100,23 +91,6 @@ export function TransactionProvider({ children }) {
         try {
             // Se a API suporta filtro por mês, use a função que busca do servidor
             fetchTransactionsByMonth(year, month);
-            
-            // Caso contrário, filtre localmente
-            const filtered = transactions.filter(transaction => {
-                try {
-                    const date = new Date(transaction.date);
-                    return date.getFullYear() === year && date.getMonth() === month;
-                } catch (error) {
-                    console.error("Erro ao processar data:", error, transaction);
-                    return false;
-                }
-            });
-            
-            setFilteredTransactions(filtered);
-            setSelectedMonth(month);
-            setSelectedYear(year);
-            
-            console.log(`Transações filtradas para ${month+1}/${year}:`, filtered);
         } catch (error) {
             console.error("Erro ao filtrar transações:", error);
         }
@@ -217,8 +191,7 @@ export function TransactionProvider({ children }) {
             updateTransaction,
             deleteTransaction,
             fetchTransactions,
-            adicionarTransacao,
-            isLoading
+            adicionarTransacao
         }}>
             {children}
         </TransactionContext.Provider>

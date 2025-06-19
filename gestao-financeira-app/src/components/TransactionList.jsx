@@ -10,7 +10,7 @@ export function TransactionList() {
   
   const { 
     filteredTransactions, 
-    filterTransactionsByMonth, 
+    filterTransactionsByMonth,
     clearMonthFilter,
     selectedMonth,
     selectedYear
@@ -24,7 +24,7 @@ export function TransactionList() {
   // Gerar anos para o filtro (3 anos atrás até 2 anos à frente)
   const currentYear = new Date().getFullYear();
   const years = [];
-  for (let i = currentYear - 3; i <= currentYear + 2; i++) {
+  for (let i = currentYear - 3; i <= currentYear; i++) {
     years.push(i);
   }
 
