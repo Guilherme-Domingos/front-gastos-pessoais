@@ -50,23 +50,28 @@ export function TransactionEdit() {
   }, [id, transactions, navigate]);
 
   const handleSaveCategory = async (name) => {
-        const novaCategoria = {
-          name,
-          userId: user.id 
-        };
-    
-        try {
-          const api = Api();
-          const response = await api.post('/category', novaCategoria);
-          const { data } = response.data;
-          adicionarCategoria({id: data, ...novaCategoria});
-          setCategoria(name);
-        } catch (error) {
-          console.error('Erro ao adicionar categoria:', error);
-          alert('Falha ao adicionar a categoria.');
-        }
-    
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+          alert('Você precisa estar logado para registrar uma despesa.');
+          return;
+      }
+      const novaCategoria = {
+        name,
+        userId: user.id 
       };
+
+      try {
+        const api = Api();
+        const response = await api.post('/category', novaCategoria);
+        const { data } = response.data;
+        adicionarCategoria({id: data, ...novaCategoria});
+        setCategoria(name);
+      } catch (error) {
+        console.error('Erro ao adicionar categoria:', error);
+        alert('Falha ao adicionar a categoria.');
+      }
+    
+  };
 
   const salvarAlteracoes = async () => {
       const user = JSON.parse(localStorage.getItem('user'));

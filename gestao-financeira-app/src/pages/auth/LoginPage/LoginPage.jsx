@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 
-function LoginPage() {  const [email, setEmail] = useState('');
+function LoginPage() {  
+  const [email, setEmail] = useState('');
   const [password, setSenha] = useState('');
   const [error, setError] = useState('');
   const { login, isAuthenticated, } = useAuth();

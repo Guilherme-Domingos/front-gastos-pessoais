@@ -10,6 +10,7 @@ import { TransactionDetails } from '../components/TransactionDetails';
 import { useContext } from 'react';
 import { TransactionContext } from '../contexts/TransactionContext';
 import { ProtectedRoute } from './ProtectedRoute';
+import { ProfilePage } from '../pages/profile/ProfilePage';
 
 const PAGE_TITLES = {  '/dashboard': 'Dashboard',
   '/dashboard/receita/nova': 'Nova Receita',
@@ -70,7 +71,7 @@ export default function AppRoutes() {
           <Route index element={<Dashboard />} />
           <Route path="receita/nova" element={<NewRecipe />} />        
           <Route path="despesa/nova" element={<NewExpense/>} />
-          <Route path="perfil" element={<h1>Perfil</h1>} />
+          <Route path="perfil" element={<ProfilePage/>} />
           <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
           <Route path="transacao/:id/editar" element={<TransactionEdit />} />
         </Route>

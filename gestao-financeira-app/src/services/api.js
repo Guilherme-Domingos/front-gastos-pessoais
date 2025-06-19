@@ -9,6 +9,12 @@ const api = axios.create({
     },
 });
 
+// Evento personalizado para comunicação com o AuthContext
+export const AUTH_EVENTS = {
+  TOKEN_EXPIRED: 'token_expired',
+  NETWORK_ERROR: 'network_error'
+};
+
 api.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
@@ -20,6 +26,7 @@ api.interceptors.request.use(
     },
     error => {
         // Lidar com erros de requisição
+        console.error('Erro na requisição:', error);
         return Promise.reject(error);
     }
 );
@@ -31,14 +38,28 @@ api.interceptors.response.use(
   error => {
     // Verifica se o erro é o 401 (Não Autorizado)
     if (error.response && error.response.status === 401) {
-      console.log('Token expirado ou inválido. Realizando logout...');
-      // Limpa os dados de autenticação do armazenamento local
+      console.log('Token expirado ou inválido.');
+      
+      // Disparar evento para o AuthContext lidar com o logout
+      const event = new CustomEvent(AUTH_EVENTS.TOKEN_EXPIRED, {
+        detail: { message: 'Sua sessão expirou. Por favor, faça login novamente.' }
+      });
+      window.dispatchEvent(event);
+      
+      // Ainda remove o token do localStorage para garantir
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redireciona o usuário para a tela de login
-      window.location.href = '/login';
     }
-    // Para outros erros, apenas rejeita a promise
+    // Se for erro de rede ou servidor indisponível
+    else if (error.code === 'ERR_NETWORK' || (error.response && error.response.status >= 500)) {
+      // Disparar evento para erros de rede
+      const event = new CustomEvent(AUTH_EVENTS.NETWORK_ERROR, {
+        detail: { message: 'Não foi possível conectar ao servidor. Verifique sua conexão.' }
+      });
+      window.dispatchEvent(event);
+    }
+    
+    // Para todos os erros, rejeita a promise
     return Promise.reject(error);
   }
 );

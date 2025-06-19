@@ -1,8 +1,12 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Api } from '../services/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Api, AUTH_EVENTS } from '../services/api';
+import { toast } from 'react-toastify';
 
 const api = Api();
+
+// Rotas que não precisam de autenticação
+const PUBLIC_ROUTES = ['/login', '/cadastro'];
 
 // 1. Criar o Contexto
 export const AuthContext = createContext({});
@@ -13,18 +17,72 @@ export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true); // Para saber quando a verificação inicial terminou
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Escutar eventos de autenticação disparados pelo interceptador
+    useEffect(() => {
+        const handleTokenExpired = (event) => {
+            console.log('Evento de token expirado recebido');
+            
+            // Limpar os dados do usuário
+            setUser(null);
+            setIsAuthenticated(false);
+            
+            
+            if (event.detail?.message) {
+                // Se você estiver usando React Toastify ou similar
+                toast.info(event.detail.message);
+                console.log(event.detail.message);
+            }
+            
+            // Redirecionar para a página de login
+            navigate('/login');
+        };
+        
+        const handleNetworkError = (event) => {
+            // Mostrar mensagem de erro de rede para o usuário
+            if (event.detail?.message) {
+                // Se você estiver usando React Toastify ou similar
+                toast.error(event.detail.message);
+                console.error(event.detail.message);
+            }
+        };
+        
+        // Adicionar listeners para os eventos
+        window.addEventListener(AUTH_EVENTS.TOKEN_EXPIRED, handleTokenExpired);
+        window.addEventListener(AUTH_EVENTS.NETWORK_ERROR, handleNetworkError);
+        
+        // Cleanup: remover os listeners quando o componente for desmontado
+        return () => {
+            window.removeEventListener(AUTH_EVENTS.TOKEN_EXPIRED, handleTokenExpired);
+            window.removeEventListener(AUTH_EVENTS.NETWORK_ERROR, handleNetworkError);
+        };
+    }, [navigate]);
     
     // Roda uma vez quando a aplicação carrega para verificar se já existe um token
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
-
+        
+        // Verifica se a rota atual é pública
+        const isPublicRoute = PUBLIC_ROUTES.some(route => location.pathname.startsWith(route));
+        
         if (token && storedUser) {
             setUser(JSON.parse(storedUser));
             setIsAuthenticated(true);
+        } else {
+            console.log('Nenhum token encontrado, usuário não autenticado');
+            setUser(null);
+            setIsAuthenticated(false);
+            
+            // Só redireciona para login se não estiver em uma rota pública
+            if (!isPublicRoute) {
+                console.log('Redirecionando para login por não estar em uma rota pública');
+                navigate('/login'); 
+            }
         }
         setLoading(false); // Finaliza o carregamento inicial
-    }, []);    
+    }, [navigate, location.pathname]);    
     
     const login = async (email, password) => {
         try {
