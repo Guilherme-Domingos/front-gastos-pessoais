@@ -10,7 +10,7 @@ export function TransactionList() {
   
   const { 
     filteredTransactions, 
-    filterTransactionsByMonth,
+    fetchTransactionsByMonth,
     clearMonthFilter,
     selectedMonth,
     selectedYear
@@ -46,7 +46,7 @@ export function TransactionList() {
   // Aplicar filtro quando o mês e o ano forem selecionados
   const handleApplyFilter = (year, month) => {
     if (year && month !== null) {
-      filterTransactionsByMonth(year, month);
+      fetchTransactionsByMonth(year, month);
       setShowMonthFilter(false);
     }
   };

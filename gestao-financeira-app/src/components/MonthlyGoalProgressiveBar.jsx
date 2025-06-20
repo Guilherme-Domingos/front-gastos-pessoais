@@ -6,7 +6,7 @@ import styles from './MonthlyGoalProgressiveBar.module.css';
 
 export function MonthlyGoalProgressiveBar() {
   const api = Api();
-  const { filterTransactionsByMonth, getTotalExpenses } = useContext(TransactionContext);
+  const { fetchTransactionsByMonth, getTotalExpenses } = useContext(TransactionContext);
   const { user } = useContext(AuthContext);
 
   const [metasMensais, setMetasMensais] = useState([]);
@@ -71,7 +71,7 @@ export function MonthlyGoalProgressiveBar() {
       
       // Filtrar transações pelo mês e ano da meta selecionada
       // API usa mês 1-12, mas JavaScript usa 0-11, por isso subtraímos 1
-      filterTransactionsByMonth(meta.ano, meta.mes - 1);
+      fetchTransactionsByMonth(meta.ano, meta.mes - 1);
     }
     setLoading(false);
   };

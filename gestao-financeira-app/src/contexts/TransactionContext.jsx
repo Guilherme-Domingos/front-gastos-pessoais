@@ -9,7 +9,7 @@ export const TransactionContext = createContext({
     updateTransaction: () => {},
     deleteTransaction: () => {},
     adicionarTransacao: () => {},
-    filterTransactionsByMonth: () => {}, // Nova função para filtrar por mês
+    fetchTransactionsByMonth: () => {}, // Nova função para filtrar por mês
     clearMonthFilter: () => {}, // Nova função para limpar o filtro
     selectedMonth: null, // Mês selecionado para filtro
     selectedYear: null, // Ano selecionado para filtro
@@ -51,10 +51,15 @@ export function TransactionProvider({ children }) {
 
     // Função para buscar transações filtradas por mês e ano do servidor
     // Esta função realiza uma chamada à API para obter dados filtrados
-    async function fetchTransactionsByMonth(year, month){
+    const fetchTransactionsByMonth = async (year, month) =>{
         try {
             if (!user || !user.id) {
                 console.log("Usuário não encontrado, não é possível buscar transações");
+                return;
+            }
+
+            if (year === null || month === null) {
+                clearMonthFilter();
                 return;
             }
             
@@ -76,22 +81,6 @@ export function TransactionProvider({ children }) {
         } catch (error) {
             console.error("Erro ao buscar transações por mês:", error);
             return [];
-        }
-    };
-    
-    // Função para filtrar as transações já carregadas localmente
-    // Essa função não faz uma nova chamada à API, apenas filtra os dados já existentes
-    const filterTransactionsByMonth = (year, month) => {
-        if (year === null || month === null) {
-            clearMonthFilter();
-            return;
-        }
-        
-        try {
-            // Se a API suporta filtro por mês, use a função que busca do servidor
-            fetchTransactionsByMonth(year, month);
-        } catch (error) {
-            console.error("Erro ao filtrar transações:", error);
         }
     };
     
@@ -180,7 +169,7 @@ export function TransactionProvider({ children }) {
         <TransactionContext.Provider value={{ 
             transactions,
             filteredTransactions,
-            filterTransactionsByMonth,
+            fetchTransactionsByMonth,
             clearMonthFilter,
             selectedMonth,
             selectedYear,
