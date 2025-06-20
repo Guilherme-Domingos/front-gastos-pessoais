@@ -30,7 +30,6 @@ export function NewRecipe() {
   };
 
  const registrar = async () => {
-      // const user = JSON.parse(localStorage.getItem('user'));
       const categoriaSelecionada = categories.find(cat => cat.name === categoria);
 
       if (!user) {
@@ -73,7 +72,6 @@ export function NewRecipe() {
  
 
   const handleSaveCategory = async (name) => {
-      // const user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
           alert('Você precisa estar logado para registrar uma despesa.');
           return;

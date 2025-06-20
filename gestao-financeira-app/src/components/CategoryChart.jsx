@@ -1,4 +1,3 @@
-import React, { useRef, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
@@ -6,7 +5,6 @@ import { Doughnut } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 export function CategoryChart({ data }) {
-  const chartRef = useRef(null);
 
   // Verificar se os dados estão disponíveis
   if (!data || !Array.isArray(data) || data.length === 0) {
@@ -84,7 +82,6 @@ export function CategoryChart({ data }) {
   return (
     <div style={{ height: '400px', maxWidth: '500px', margin: '0 auto' }}>
       <Doughnut 
-        ref={chartRef}
         data={chartData} 
         options={chartOptions}
       />

@@ -1,0 +1,119 @@
+/* MonthlyGoalProgressiveBar.module.css */
+
+.container {
+  width: 100%;
+  max-width: 28rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937; /* text-gray-900 */
+  margin: 0;
+}
+
+.editButton {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563; /* text-gray-600 */
+  background-color: white;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.editButton:hover {
+  background-color: #f9fafb; /* bg-gray-50 */
+  color: #1f2937; /* text-gray-900 */
+}
+
+.selectWrapper {
+  margin-bottom: 1rem;
+}
+
+.metaSelect {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #4b5563; /* text-gray-600 */
+  cursor: pointer;
+}
+
+.metaSelect:focus {
+  outline: none;
+  border-color: #3b82f6; /* border-blue-500 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.progressBackground {
+  position: relative;
+  height: 0.75rem;
+  background-color: #e5e7eb; /* bg-gray-200 */
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+.barRed {
+  background-color: #ef4444; /* bg-red-500 */
+}
+
+.barYellow {
+  background-color: #eab308; /* bg-yellow-500 */
+}
+
+.barGreen {
+  background-color: #22c55e; /* bg-green-500 */
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; /* text-gray-700 */
+  margin-top: 0.625rem;
+}
+
+.error {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: #dc2626; /* text-red-600 */
+  background-color: #fee2e2; /* bg-red-100 */
+  border-radius: 0.375rem;
+}
+
+/* Estados de loading e vazio */
+.loading, .empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0;
+  color: #6b7280; /* text-gray-500 */
+  font-size: 0.875rem;
+}

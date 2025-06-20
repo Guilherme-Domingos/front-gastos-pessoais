@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TransactionContext } from '../../contexts/TransactionContext';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
+import { AuthContext } from '../../contexts/AuthContext';
 import { Api } from '../../services/api';
 
 export function TransactionEdit() {
@@ -18,9 +19,9 @@ export function TransactionEdit() {
   
   const navigate = useNavigate();
   const { id } = useParams();
-  // console.log('ID da transação:', id);
   const { transactions, updateTransaction } = useContext(TransactionContext);
   const { categories, adicionarCategoria } = useContext(CategoryContext);
+  const { user } = useContext(AuthContext);
 
   // Carregar dados da transação
   useEffect(() => {    
@@ -50,7 +51,6 @@ export function TransactionEdit() {
   }, [id, transactions, navigate]);
 
   const handleSaveCategory = async (name) => {
-      const user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
           alert('Você precisa estar logado para registrar uma despesa.');
           return;
@@ -74,7 +74,6 @@ export function TransactionEdit() {
   };
 
   const salvarAlteracoes = async () => {
-      const user = JSON.parse(localStorage.getItem('user'));
       const categoryId = categories.find(cat => cat.name === categoria)?.id;
 
       if (!user) {

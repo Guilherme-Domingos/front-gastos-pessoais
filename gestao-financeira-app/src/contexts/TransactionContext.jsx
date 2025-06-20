@@ -22,7 +22,6 @@ const api = Api();
 
 export function TransactionProvider({ children }) {
     const [transactions, setTransactions] = useState([]);
-    const [ transactionsMonth, setTransactionsMonth ] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]); // Estado para transações filtradas
     const [selectedMonth, setSelectedMonth] = useState(null); // Estado para mês selecionado (0-11)
     const [selectedYear, setSelectedYear] = useState(null); // Estado para ano selecionado

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Api } from "../../services/api";
 import { AuthContext } from "../../contexts/AuthContext";
 import { CategoryChart } from "../../components/CategoryChart";
-import { TransactionContext } from "../../contexts/TransactionContext";
+import { MonthlyGoalProgressiveBar } from "../../components/MonthlyGoalProgressiveBar";
 import styles from "./ProfilePage.module.css";
 
 export function ProfilePage() {
@@ -15,6 +15,7 @@ export function ProfilePage() {
     const [error, setError] = useState(null);
     const [tipoGrafico, setTipoGrafico] = useState('RECEITA'); // RECEITA ou DESPESA
 
+    // Função para buscar dados de receitas e despesas por categoria
     const fetchCategoryTotalData = async (tipo) => {
         if (!user || !user.id) {
             setError("Usuário não encontrado. Faça login novamente.");
@@ -57,6 +58,10 @@ export function ProfilePage() {
     
     return (
         <div className={styles.profileContainer}>
+
+            <h1>Olá {user.name}!</h1>
+            <MonthlyGoalProgressiveBar />
+            <br />
             <h1>Análise Financeira</h1>
             
             <div className={styles.chartControls}>

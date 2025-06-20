@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import styles from './NewExpense.module.css';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CategoryContext } from '../../contexts/CategoryContext';
 import { CategoryModal } from '../../components/CategoryModal';
 import { TransactionContext } from '../../contexts/TransactionContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import { Api } from '../../services/api';
 
 export function NewExpense() {
@@ -17,6 +18,7 @@ export function NewExpense() {
 
   const { categories, adicionarCategoria } = useContext(CategoryContext);
   const { adicionarTransacao } = useContext(TransactionContext);
+  const { user } = useContext(AuthContext);
 
   const limparCampos = () => {
     setData('');
@@ -26,7 +28,6 @@ export function NewExpense() {
   };
 
 const registrar = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
     const categoriaSelecionada = categories.find(cat => cat.name === categoria);
 
     if (!user) {
@@ -66,7 +67,6 @@ const registrar = async () => {
 };
 
   const handleSaveCategory = async (name) => {
-    const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
         alert('Você precisa estar logado para registrar uma despesa.');
         return;

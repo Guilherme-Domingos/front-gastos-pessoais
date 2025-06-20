@@ -7,8 +7,6 @@ import { NewRecipe } from '../pages/NewRecipe/NewRecipe';
 import { NewExpense } from '../pages/NewExpense/NewExpense';
 import { TransactionEdit } from '../pages/TransactionEdit/TransactionEdit';
 import { TransactionDetails } from '../components/TransactionDetails';
-import { useContext } from 'react';
-import { TransactionContext } from '../contexts/TransactionContext';
 import { ProtectedRoute } from './ProtectedRoute';
 import { ProfilePage } from '../pages/profile/ProfilePage';
 
@@ -18,31 +16,7 @@ const PAGE_TITLES = {  '/dashboard': 'Dashboard',
   '/dashboard/perfil': 'Perfil',
   '/dashboard/transacao': 'Detalhes da Transação',
   '/dashboard/transacao/editar': 'Editar Transação',
-  // Adicione outros caminhos e títulos conforme necessário
 };
-
-function TransactionDetailsWrapper() {
-  const { transactions, deleteTransaction } = useContext(TransactionContext);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const id = location.pathname.split('/').pop();
-  const transaction = transactions.find(tx => String(tx.id) === id);
-
-  if (!transaction) return <div>Transação não encontrada</div>;
-
-  const handleEdit = () => {
-    navigate(`/dashboard/transacao/${id}/editar`);
-  };
-  
-  const handleDelete = () => {
-    if (confirm('Tem certeza que deseja excluir esta transação?')) {
-      deleteTransaction(id);
-      navigate('/dashboard');
-    }
-  };
-
-  return <TransactionDetails transaction={transaction} onEdit={handleEdit} onDelete={handleDelete} />;
-}
 
 function LayoutWrapper() {
   const location = useLocation();
@@ -72,7 +46,7 @@ export default function AppRoutes() {
           <Route path="receita/nova" element={<NewRecipe />} />        
           <Route path="despesa/nova" element={<NewExpense/>} />
           <Route path="perfil" element={<ProfilePage/>} />
-          <Route path="transacao/:id" element={<TransactionDetailsWrapper />} />
+          <Route path="transacao/:id" element={<TransactionDetails />} />
           <Route path="transacao/:id/editar" element={<TransactionEdit />} />
         </Route>
       </Route>
